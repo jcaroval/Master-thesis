@@ -94,6 +94,11 @@ spades.py -meta --only-assembler -t 100 -m 800 -1 sub20_1.fq.gz -2 sub20_2.fq.gz
 seqkit stats contigs.fa
 ```
 
+3.3.3 Check BUSCO completeness. The lineage nematoda_odb10 is downloaded by the program automatically and does not need to be installed locally.
+```
+busco -i contigs.fa -o busco_EPT_odb10 -l nematoda_odb10 -m genome -c 32
+```
+
 3.4 Platanus_allee
 
 3.4.1 Assemble the concatenated sequences with Platanus_allee
@@ -103,15 +108,21 @@ seqkit stats contigs.fa
 3.4.2 Check the assembly accurary with seqkit similar to step 3.3.2
 
 
+**4. Blobtools**
 
-
-
-
-
-
-
-
-
-
-
-
+4.1 Blast the contig file from the De-novo Genome Assembly against the nucleotide database
+```
+blastn -task megablast -query /home/jcaroval/02.TrimmedData/assembly_20_percent/contigs.fa -db /import/lragioneri/nt -outfmt '6 qseqid staxids bitscore std' -max_target_seqs 10 -max_hsps 1 -evalue 1e-25 -out /home/jcaroval/02.TrimmedData/blastn/megablast.out
+```
+4.2 Run minimap to receive a coverage file
+```
+minimap2 -ax sr -t 16 ./assembly_20_percent/contigs.fa sub20_1.fq.gz sub20_2.fq.gz | samtools sort -@16 -O BAM -o contigs.fasta.bam
+```
+4.3 Run Blobtools
+```
+blobtools create --fasta ./assembly_20_percent/contigs.fa --hits ./blastn/megablast.out --cov contigs.fasta.bam --taxid 55786 --taxdump ./taxdump blob_EPT
+```
+4.4 Visualize Blobplot
+```
+blobtools view --remote --view blob blob_EPT
+```
