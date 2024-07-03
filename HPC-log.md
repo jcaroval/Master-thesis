@@ -216,6 +216,51 @@ do
   phyluce_assembly_get_fasta_lengths --input $i --csv;
 done
 ```
+5.7 Investigate the amount of contigs
+```
+seqkit stats all-taxa-incomplete.fasta
+```
+
+5.8 Remove duplicates from all-taxa-incomplete.fasta
+```
+seqkit sort –n all-taxa-incomplete-length.fasta > all-taxa-incomplete-sorted.fasta
+cut -d ‘_’ -f 1 all-taxa-incomplete-sorted.fasta > all-taxa-incomplete-sorted-shortened.fasta
+seqkit rmdup -n < all-taxa-incomplete-sortened-shortened.fasta > all-taxa-incomplete-no-dups.fasta
+```
+5.9 Check the amount of contigs again
+```
+seqkit stats all-taxa-incomplete-no-dups.fasta
+```
+5.10 Map individual sequences against the reference set with bwa-mem2
+
+5.10.1 Create index for reference set
+```
+bwa-mem2 index all-taxa-incomplete-no-dups.fasta
+```
+5.10.2 Map against reference set
+```
+bwa-mem2 mem -t 32 ./10.UCE_index/all-taxa-incomplete-no-dups.fasta ./02.TrimmedData/EPT_A10/EPT_A10_EKDL240004051-1A_223W3LLT4_L8_trimmed_1.fq.gz ./02.TrimmedData/EPT_A10/EPT_A10_EKDL240004051-1A_223W3LLT4_L8_trimmed_2.fq.gz -o 09.UCE/EPT_A10_UCEs_out.sam
+```
+or for multiple files:
+```
+for INDIVIDUAL_DIR in ./02.TrimmedData/EPT_*; do
+  if [-d "$INDIVIDUAL_DIR" ]; then
+      INDIVIDUAL=$(basename "$INDIVIDUAL_DIR")
+
+      READ1="$INDIVIDUAL_DIR/*_1.fq.gz"
+      READ2="$INDIVIDUAL_DIR/*_2.fq.gz"
+
+      if ls $READ1 1> /dev/null 2>&1 && ls $READ2 1> /dev/null 2>&1; then
+        OUTPUT_FILE="./09.UCE/bwa-mem2-UCE/${INDIVIDUAL}_UCEs_out.sam"
+
+          bwa-mem2 mem -t 32 ./10.UCE_index/all-taxa-incomplete-no-dups.fasta $READ1 $READ2 -o $OUTPUT_FILE
+          echo "Finished bwa-mem2 for $INDIVIDUAL."
+      else
+        echo "Skipped $INDIVIDUAL due to missing read files."
+      fi
+  fi
+done
+```
 
 
 
