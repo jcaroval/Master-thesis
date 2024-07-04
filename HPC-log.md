@@ -261,6 +261,34 @@ for INDIVIDUAL_DIR in ./02.TrimmedData/EPT_*; do
   fi
 done
 ```
+5.10.3 Convert SAM to BAM
+```
+ls -1 | sed 's/_UCEs_out.sam//g' > list-XX 
+while read f; do 
+samtools view -b $f"_UCEs_out.sam" > $f"_UCEs.bam" ;
+done < list-XX
+```
+
+5.10.4 Quality check of the mappings using samtools flagstat
+```
+for bam_file in *.bam
+do
+    sample_id=$(basename "$bam_file" .bam)
+    echo "Sample ID: $sample_id" >> flagstat.out
+    samtools flagstat "$bam_file" >> flagstat.out
+    echo "" >> flagstat.out
+done
+```
+or using samtools stats
+```
+for bam_file in *.bam
+do
+    sample_id=$(basename "$bam_file" .bam)
+    echo "Sample ID: $sample_id" >> samtools.out
+    samtools stats "$bam_file" | grep ^SN | cut -f 2- >> samtools.out
+    echo "" >> samtools.out
+```
+
 
 
 
