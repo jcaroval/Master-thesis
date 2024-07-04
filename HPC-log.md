@@ -168,6 +168,7 @@ blobtools view \
 **5. Mapping against UCEs**
 
 This pipeline follows this protocol: https://phyluce.readthedocs.io/en/latest/tutorials/tutorial-1.html#aligning-uce-loci
+
 5.1 Assemble the data. Here, only a subset of 6 samples was assembled.
 ```
 phyluce_assembly_assemblo_spades \
