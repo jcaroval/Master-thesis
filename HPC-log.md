@@ -287,6 +287,7 @@ do
     echo "Sample ID: $sample_id" >> samtools.out
     samtools stats "$bam_file" | grep ^SN | cut -f 2- >> samtools.out
     echo "" >> samtools.out
+done
 ```
 
 
