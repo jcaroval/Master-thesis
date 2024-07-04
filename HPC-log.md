@@ -240,7 +240,12 @@ bwa-mem2 index all-taxa-incomplete-no-dups.fasta
 ```
 5.10.2 Map against reference set
 ```
-bwa-mem2 mem -t 32 ./10.UCE_index/all-taxa-incomplete-no-dups.fasta ./02.TrimmedData/EPT_A10/EPT_A10_EKDL240004051-1A_223W3LLT4_L8_trimmed_1.fq.gz ./02.TrimmedData/EPT_A10/EPT_A10_EKDL240004051-1A_223W3LLT4_L8_trimmed_2.fq.gz -o 09.UCE/EPT_A10_UCEs_out.sam
+bwa-mem2 mem \
+-t 32 \
+./10.UCE_index/all-taxa-incomplete-no-dups.fasta \
+./02.TrimmedData/ID/ID_trimmed_1.fq.gz \
+./02.TrimmedData/ID/ID_trimmed_2.fq.gz \
+-o 09.UCE/ID_UCEs_out.sam
 ```
 or for multiple files:
 ```
@@ -290,6 +295,19 @@ do
     echo "" >> samtools.out
 done
 ```
+
+5.11 Extract only the mapped reads from the BAM files
+```
+samtools view -q 30 -F 4 -b ID_UCEs.bam > ID_mappedreads.bam
+```
+or for multiple files
+```
+for file in *_UCEs.bam; do
+    output="${file%_UCEs.bam}_SufficientlyMapped.bam"
+    samtools view -q 30 -F 4 -b "$file" > "$output"
+done
+```
+
 
 
 
