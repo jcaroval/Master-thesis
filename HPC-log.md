@@ -293,9 +293,9 @@ for input_sam in ${SAM_DIR}/*.sam; do
 
 5.10.4 Convert SAM to BAM
 ```
-ls -1 | sed 's/_UCEs_out_modified.sam//g' > list-XX 
+ls *_RG.sam | sed 's/_RG.sam//g' > list-XX 
 while read f; do 
-samtools view -b $f"_UCEs_out_modified.sam" > $f"_UCEs.bam" ;
+samtools view -b $f"_RG.sam" > $f"_RG.bam" ;
 done < list-XX
 ```
 
@@ -322,7 +322,7 @@ done
 
 5.11 Sort the BAM file
 ```
-for file in *_UCEs.bam; do
+for file in *_RG.bam; do
     sample_id=$(basename "$file" .bam)
     sorted_file="${file}_sorted.bam"
     samtools sort "$file" -o "$sorted_file"
@@ -350,7 +350,7 @@ done
 
 5.14 Visualize the mapping in Tablet
 ```
-./tablet /home/jcaroval/09.UCE/bwa-mem2-UCE/EPT_A10_UCEs_sorted_mapped.bam /home/jcaroval/10.UCE_index/all-taxa-incomplete-no-dups.fasta
+./tablet /home/jcaroval/09.UCE/bwa-mem2-UCE/EPT_A10_RG_sorted_mapped.bam /home/jcaroval/10.UCE_index/all-taxa-incomplete-no-dups.fasta
 ```
 
 
