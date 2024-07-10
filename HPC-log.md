@@ -277,10 +277,10 @@ for sam_file in "$sam_dir"/*.sam; do
         sample_id=$(basename "$sam_file" | cut -d'_' -f2)
         output_file="$output_dir/$(basename "$sam_file" .sam)_modified.sam"
         tmp_output=$(mktemp)
-        sed "s/^@SQ/@$sample_id/" "$sam_file" > "$tmp_output"
+        sed "s/^@SQ\tSN:/@SQ\tSN:$sample_id:/" "$sam_file" > "$tmp_output"
         mv "$tmp_output" "$output_file"
-        echo "Changed headers from @SQ to @$sam_file"
-        echo "Modified file saved: $output_file"
+        echo "Header changed for $sam_file"
+        echo "Modified SAM-file saved: $output_file"
     fi
 done
 ```
