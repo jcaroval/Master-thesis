@@ -313,9 +313,7 @@ for sorted_file in *_sorted.bam; do
 done
 ```
 
-
-
-5.12 Repeat QC with flagstat to make sure that only mapped reads are included (100 % mapped reads)
+5.13 Repeat QC with flagstat to make sure that only mapped reads are included (100 % mapped reads)
 ```
 for bam_file in *_mapped.bam
 do
@@ -326,8 +324,9 @@ do
 done
 ```
 
-
-
-
+5.14 Visualize the mapping in Tablet
+```
+./tablet /home/jcaroval/09.UCE/bwa-mem2-UCE/EPT_A10_UCEs.bam_sorted__mapped.bam /home/jcaroval/10.UCE_index/all-taxa-incomplete-no-dups.fasta
+```
 
 
