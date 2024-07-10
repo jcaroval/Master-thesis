@@ -296,6 +296,33 @@ do
 done
 ```
 
+5.11 Sort the BAM file
+```
+for file in *_UCEs.bam; do
+    sample_id=$(basename "$file" .bam)
+    sorted_file="${file}_sorted.bam"
+    samtools sort "$file" -o "$sorted_file"
+```
+
+5.12 Extract only the mapped reads from the BAM files
+```
+for sorted_file in *_sorted.bam; do
+    sample_id=$(basename "$sorted_file" .bam)
+    output="${sorted_file}_mapped.bam"
+    samtools view -q 30 -F 4 -b "$sorted_file" > "$output"
+done
+```
+
+
+
+
+
+
+
+___
+
+
+
 5.11 Extract only the mapped reads from the BAM files
 ```
 samtools view -q 30 -F 4 -b ID_UCEs.bam > ID_mappedreads.bam
@@ -303,7 +330,7 @@ samtools view -q 30 -F 4 -b ID_UCEs.bam > ID_mappedreads.bam
 or for multiple files
 ```
 for file in *_UCEs.bam; do
-    output="${file%_UCEs.bam}_SufficientlyMapped.bam"
+    output="${file%_UCEs.bam}_mappedreads.bam"
     samtools view -q 30 -F 4 -b "$file" > "$output"
 done
 ```
@@ -318,6 +345,7 @@ do
     echo "" >> flagstat_mapped.out
 done
 ```
+5.13 Sort the BAM file
 
 
 
