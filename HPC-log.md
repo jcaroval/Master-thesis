@@ -315,38 +315,16 @@ done
 
 
 
-
-
-
-
-___
-
-
-
-5.11 Extract only the mapped reads from the BAM files
-```
-samtools view -q 30 -F 4 -b ID_UCEs.bam > ID_mappedreads.bam
-```
-or for multiple files
-```
-for file in *_UCEs.bam; do
-    output="${file%_UCEs.bam}_mappedreads.bam"
-    samtools view -q 30 -F 4 -b "$file" > "$output"
-done
-```
-
 5.12 Repeat QC with flagstat to make sure that only mapped reads are included (100 % mapped reads)
 ```
-for bam_file in *_mappedreads.bam
+for bam_file in *_mapped.bam
 do
-    sample_id=$(basename "$bam_file" _mappedreads.bam)
+    sample_id=$(basename "$bam_file" _mapped.bam)
     echo "Sample ID: $sample_id" >> flagstat_mapped.out
     samtools flagstat "$bam_file" >> flagstat_mapped.out
     echo "" >> flagstat_mapped.out
 done
 ```
-
-
 
 
 
