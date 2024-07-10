@@ -345,7 +345,6 @@ do
     echo "" >> flagstat_mapped.out
 done
 ```
-5.13 Sort the BAM file
 
 
 
