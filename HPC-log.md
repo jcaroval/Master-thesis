@@ -267,15 +267,34 @@ for INDIVIDUAL_DIR in ./02.TrimmedData/EPT_*; do
   fi
 done
 ```
-5.10.3 Convert SAM to BAM
+
+5.10.3 Set a flag-tag for each individual
 ```
-ls -1 | sed 's/_UCEs_out.sam//g' > list-XX 
+sam_dir="/home/jcaroval/09.UCE/bwa-mem2-UCE"
+output_dir="/home/jcaroval/09.UCE/bwa-mem2-UCE"
+for sam_file in "$sam_dir"/*.sam; do
+    if [[ -f "$sam_file" ]]; then
+        sample_id=$(basename "$sam_file" | cut -d'_' -f2)
+        output_file="$output_dir/$(basename "$sam_file" .sam)_modified.sam"
+        tmp_output=$(mktemp)
+        sed "s/^@SQ/@$sample_id/" "$sam_file" > "$tmp_output"
+        mv "$tmp_output" "$output_file"
+        echo "Changed headers from @SQ to @$sam_file"
+        echo "Modified file saved: $output_file"
+    fi
+done
+```
+
+
+5.10.4 Convert SAM to BAM
+```
+ls -1 | sed 's/_UCEs_out_modified.sam//g' > list-XX 
 while read f; do 
-samtools view -b $f"_UCEs_out.sam" > $f"_UCEs.bam" ;
+samtools view -b $f"_UCEs_out_modified.sam" > $f"_UCEs.bam" ;
 done < list-XX
 ```
 
-5.10.4 Quality check of the mappings using samtools flagstat
+5.10.5 Quality check of the mappings using samtools flagstat
 ```
 for bam_file in *.bam
 do
