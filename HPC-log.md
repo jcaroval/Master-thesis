@@ -270,19 +270,24 @@ done
 
 5.10.3 Set a flag-tag for each individual
 ```
-sam_dir="/home/jcaroval/09.UCE/bwa-mem2-UCE"
-output_dir="/home/jcaroval/09.UCE/bwa-mem2-UCE"
-for sam_file in "$sam_dir"/*.sam; do
-    if [[ -f "$sam_file" ]]; then
-        sample_id=$(basename "$sam_file" | cut -d'_' -f2)
-        output_file="$output_dir/$(basename "$sam_file" .sam)_modified.sam"
-        tmp_output=$(mktemp)
-        sed "s/^@SQ\tSN:/@SQ\tSN:$sample_id:/" "$sam_file" > "$tmp_output"
-        mv "$tmp_output" "$output_file"
-        echo "Header changed for $sam_file"
-        echo "Modified SAM-file saved: $output_file"
-    fi
-done
+SAM_DIR="/home/jcaroval/09.UCE/bwa-mem2-UCE"
+OUTPUT_DIR="/home/jcaroval/09.UCE/bwa-mem2-UCE"
+for input_sam in ${SAM_DIR}/*.sam; do
+  filename=$(basename -- "$input_sam")
+  sample=$(echo $filename | cut -d'_' -f1,2)
+  output_sam="${OUTPUT_DIR}/${sample}_RG.sam"
+
+  picard AddOrReplaceReadGroups \
+       I=$input_sam \
+       O=$output_sam \
+       RGID=$sample \
+       RGLB=lib${sample} \
+       RGPL=illumina \
+       RGPU=unit${sample} \
+       RGSM=$sample \
+       VALIDATION_STRINGENCY=LENIENT
+
+  echo "Read Group for $sample added successfully."
 ```
 
 
