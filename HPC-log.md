@@ -345,7 +345,7 @@ done
 
 5.14 Visualize the mapping in Tablet
 ```
-./tablet /home/jcaroval/09.UCE/bwa-mem2-UCE/EPT_A10_UCEs.bam_sorted__mapped.bam /home/jcaroval/10.UCE_index/all-taxa-incomplete-no-dups.fasta
+./tablet /home/jcaroval/09.UCE/bwa-mem2-UCE/EPT_A10_UCEs_sorted_mapped.bam /home/jcaroval/10.UCE_index/all-taxa-incomplete-no-dups.fasta
 ```
 
 
