@@ -362,7 +362,77 @@ samtools index merged.bam
 ```
 ./tablet /home/jcaroval/09.UCE/bwa-mem2-UCE/merged.bam /home/jcaroval/10.UCE_index/all-taxa-incomplete-no-dups.fasta
 ```
-or IVG for multiple files
+or on IVG.
+
+5.15 Calculate the coverage
+```
+samtools depth -a merged.bam > coverage.txt
+```
+
+5.16 Split the coverage.txt file for each UCE and plot the coverage
+```
+coverage_file="coverage.txt"
+output_dir="./coverage_no_slidingwindow"
+awk '{ print > "'${output_dir}'/"$1"_coverage.txt" }' "${coverage_file}"
+for uce_coverage_file in "${output_dir}"/*_coverage.txt; do
+    uce_name=$(basename -- "${uce_coverage_file}" "_coverage.txt")
+    gnuplot <<EOF
+    set terminal png size 800,600
+    set output '${output_dir}/${uce_name}_coverage_plot.png'
+    set xlabel 'Position'
+    set ylabel 'Coverage'
+    plot '${uce_coverage_file}' using 2:3 with lines title '${uce_name}'
+EOF
+done
+```
+then, investigate the plots
+
+5.17 (optional) Apply a sliding window approach to smoothen the data
+```
+coverage_file="coverage.txt"
+
+output_dir="./output"
+smoothed_output_dir="./smoothed_output"
+
+awk '{ print > "'${output_dir}'/"$1"_coverage.txt" }' "${coverage_file}"
+
+window_size=50  # Größe des Fensters
+step_size=5     # Schrittgröße
+
+for uce_coverage_file in "${output_dir}"/*_coverage.txt; do
+    uce_name=$(basename -- "${uce_coverage_file}" "_coverage.txt")
+    
+    python - <<EOF
+import pandas as pd
+import os
+
+input_file = "${uce_coverage_file}"
+output_file = "${smoothed_output_dir}/${uce_name}_smoothed_coverage.txt"
+
+df = pd.read_csv(input_file, sep="\t", header=None, names=["UCE", "Position", "Coverage"])
+
+window_size = ${window_size}
+step_size = ${step_size}
+smoothed_data = df['Coverage'].rolling(window=window_size, min_periods=1).mean().iloc[::step_size]
+smoothed_positions = df['Position'].iloc[::step_size]
+
+smoothed_df = pd.DataFrame({'Position': smoothed_positions, 'Smoothed_Coverage': smoothed_data})
+smoothed_df.to_csv(output_file, sep="\t", index=False, header=["Position", "Smoothed_Coverage"])
+EOF
+
+    gnuplot <<EOF
+    set terminal png size 800,600
+    set output '${smoothed_output_dir}/${uce_name}_coverage_plot.png'
+    set xlabel 'Position'
+    set ylabel 'Coverage'
+    plot '${uce_coverage_file}' using 2:3 with lines title 'Original Coverage', \
+         '${smoothed_output_dir}/${uce_name}_smoothed_coverage.txt' using 1:2 with lines title 'Smoothed Coverage'
+EOF
+```
+
+
+
+
 
 
 
