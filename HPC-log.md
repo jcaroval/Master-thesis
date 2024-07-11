@@ -352,5 +352,7 @@ done
 ```
 ./tablet /home/jcaroval/09.UCE/bwa-mem2-UCE/EPT_A10_RG_sorted_mapped.bam /home/jcaroval/10.UCE_index/all-taxa-incomplete-no-dups.fasta
 ```
+or IVG for multiple files
+
 
 
