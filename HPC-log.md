@@ -396,8 +396,8 @@ smoothed_output_dir="./smoothed_output"
 
 awk '{ print > "'${output_dir}'/"$1"_coverage.txt" }' "${coverage_file}"
 
-window_size=50  # Größe des Fensters
-step_size=5     # Schrittgröße
+window_size=50
+step_size=5
 
 for uce_coverage_file in "${output_dir}"/*_coverage.txt; do
     uce_name=$(basename -- "${uce_coverage_file}" "_coverage.txt")
