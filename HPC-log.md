@@ -350,7 +350,7 @@ done
 
 5.14 Merge all BAM files into one
 ```
-samtools merge -r merged.bam *_sorted_mapped.bam
+samtools merge -@ 64 -r merged.bam *_sorted_mapped.bam
 ```
 
 5.15 Index the merged BAM file
