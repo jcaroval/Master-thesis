@@ -348,6 +348,16 @@ do
 done
 ```
 
+5.14 Merge all BAM files into one
+```
+samtools merge -r merged.bam *_sorted_mapped.bam
+```
+
+5.15 Index the merged BAM file
+```
+samtools index merged.bam
+```
+
 5.14 Visualize the mapping in Tablet
 ```
 ./tablet /home/jcaroval/09.UCE/bwa-mem2-UCE/EPT_A10_RG_sorted_mapped.bam /home/jcaroval/10.UCE_index/all-taxa-incomplete-no-dups.fasta
