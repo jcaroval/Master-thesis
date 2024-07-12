@@ -473,6 +473,9 @@ samtools index "${filtered_bam}"
 ```
 
 5.21 Count the UCEs to verify that the correct number of UCEs had been removed
+```
+samtools view -@ 64 "filtered_merged.bam" | awk '{print $3}' | sort | uniq | wc -l
+```
 
 
 
