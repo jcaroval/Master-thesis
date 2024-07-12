@@ -448,28 +448,25 @@ sort -n -k2 "merged_average_coverages.txt" > "merged_sorted_average_coverages.tx
 Here, a threshold was set to an average coverage of 360. This threshold was chosen because a minimum threshold of 8X per individual was desired. With 45 individuals, it can be assumed that UCEs with a coverage below 360 do not lead to sufficient results.
 
 5.20 Remove the low-coverage UCEs from the files.
-```
-input_file="merged_sorted_average_coverages.txt"
-bam_file="merged.bam"
-filtered_bam="filtered_merged.bam"
-to_remove=$(awk '$2 < 360 { print $1 }' "${input_file}")
-samtools view -b "${bam_file}" | \
-awk -v to_remove="${to_remove}" '
-    BEGIN { split(to_remove, remove_array, " "); }
-    {
-        keep = 1;
-        for (i = 1; i <= length(remove_array); i++) {
-            if ($0 ~ remove_array[i]) {
-                keep = 0;
-                break;
-            }
-        }
-        if (keep) {
-            print $0;
-        }
-    }' | samtools view -b - > "${filtered_bam}"
 
-samtools index "${filtered_bam}"
+```
+awk '$2 >= 360 {print $1}' "merged_sorted_average_coverages.txt" > "uce_list_above_360.txt"
+```
+
+```
+uce_list="uce_list_above_360.txt"
+bam_dir="."
+num_threads=64
+for bam_file in "$bam_dir"/*_sorted.bam; do
+    sample_id=$(basename "$bam_file" .bam)
+    output="${bam_file}_filtered.bam"
+
+    samtools view -H "$bam_file" > header.sam
+    samtools view -@ "$num_threads" "$bam_file" | grep -F -f "$uce_list" | cat header.sam - | samtools view -b -@ "$num_threads" > "$output"
+    
+    rm header.sam
+done
+
 ```
 
 5.21 Count the UCEs to verify that the correct number of UCEs had been removed
