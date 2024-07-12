@@ -430,6 +430,36 @@ EOF
 EOF
 ```
 
+5.18 Retrieve coverage and abundance
+```
+ls *merged.bam | parallel -j 5 'samtools depth {} > {}.depth'
+```
+
+5.19 Sort the UCEs by their average coverage
+```
+input_file="merged.bam.depth"
+output_file="merged_average_coverages.txt"
+awk '{ sum[$1] += $3; count[$1]++ } END { for (uce in sum) print uce, sum[uce] / count[uce] }' "${input_file}" > "${output_file}"
+```
+and sort them by value
+```
+sort -n -k2 "merged_average_coverages.txt" > "merged_sorted_average_coverages.txt"
+```
+Here, a threshold was set to an average coverage of 360. This threshold was chosen because a minimum threshold of 8X per individual was desired. With 45 individuals, it can be assumed that UCEs with a coverage below 360 do not lead to sufficient results.
+
+5.20 Remove the low-coverage UCEs from the files.
+```
+input_file="merged_sorted_average_coverages.txt"
+to_remove_file="to_remove.txt"
+filtered_file="merged_coverages_above_360.txt"
+awk '$2 < 360 { print $1 }' "${input_file}" > "${to_remove_file}"
+awk 'NR==FNR{a[$1];next} !($1 in a)' "${to_remove_file}" "${input_file}" > "${filtered_file}"
+rm "${to_remove_file}"
+```
+
+
+
+
 
 
 
