@@ -450,13 +450,29 @@ Here, a threshold was set to an average coverage of 360. This threshold was chos
 5.20 Remove the low-coverage UCEs from the files.
 ```
 input_file="merged_sorted_average_coverages.txt"
-to_remove_file="to_remove.txt"
-filtered_file="merged_coverages_above_360.txt"
-awk '$2 < 360 { print $1 }' "${input_file}" > "${to_remove_file}"
-awk 'NR==FNR{a[$1];next} !($1 in a)' "${to_remove_file}" "${input_file}" > "${filtered_file}"
-rm "${to_remove_file}"
+bam_file="merged.bam"
+filtered_bam="filtered_merged.bam"
+to_remove=$(awk '$2 < 360 { print $1 }' "${input_file}")
+samtools view -b "${bam_file}" | \
+awk -v to_remove="${to_remove}" '
+    BEGIN { split(to_remove, remove_array, " "); }
+    {
+        keep = 1;
+        for (i = 1; i <= length(remove_array); i++) {
+            if ($0 ~ remove_array[i]) {
+                keep = 0;
+                break;
+            }
+        }
+        if (keep) {
+            print $0;
+        }
+    }' | samtools view -b - > "${filtered_bam}"
+
+samtools index "${filtered_bam}"
 ```
 
+5.21 Count the UCEs to verify that the correct number of UCEs had been removed
 
 
 
