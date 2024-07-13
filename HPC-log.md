@@ -452,12 +452,27 @@ Here, a threshold was set to an average coverage of 360. This threshold was chos
 ```
 awk '$2 < 360 {print $1}' "merged_average_coverages.txt" > "uce_list_below_360.txt"
 ```
-
+… for the merged file
 ```
 samtools view -H merged.bam > header.sam
 samtools view -@ 64 merged.bam | grep -v -F -f uce_list_below_360.txt | cat header.sam - | samtools view -b -@ 64 > merged_filtered.bam
 
 rm header.sam
+```
+… and for all individual files
+```
+uce_list="uce_list_below_360.txt"
+bam_dir="."
+num_threads=64
+for bam_file in "$bam_dir"/*_RG_sorted_mapped.bam; do
+    sample_id=$(basename "$bam_file" .bam)
+    output="${bam_dir}/${sample_id}_filtered.bam"
+
+    samtools view -H "$bam_file" > header.sam
+    samtools view -@ "$num_threads" "$bam_file" | grep -v -F -f "$uce_list" | cat header.sam - | samtools view -b -@ "$num_threads" > "$output"
+
+    rm header.sam
+done
 ```
 
 5.21 Count the UCEs to verify that the correct number of UCEs had been removed
