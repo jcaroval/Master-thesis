@@ -476,10 +476,28 @@ done
 ```
 
 5.21 Count the UCEs to verify that the correct number of UCEs had been removed
+
+… for the merged file
 ```
 samtools view -@ 64 "merged_filtered.bam" | awk '{print $3}' | sort | uniq | wc -l
 ```
+… and for all individual files
+```
+uce_list="uce_list_below_360.txt"
+bam_dir="."
+num_threads=64
+result_file="uce_counts.txt"
 
+echo -e "Sample_ID\tBefore_Filtering\tAfter_Filtering" > "$result_file"
+
+for bam_file in "$bam_dir"/*_RG_sorted_mapped.bam; do
+    sample_id=$(basename "$bam_file" .bam)
+    output="${bam_dir}/${sample_id}_filtered.bam"
+    uce_count_before=$(samtools view -@ "$num_threads" "$bam_file" | awk '{print $3}' | sort | uniq | wc -l)
+    uce_count_after=$(samtools view -@ "$num_threads" "$output" | awk '{print $3}' | sort | uniq | wc -l)
+    echo -e "${sample_id}\t${uce_count_before}\t${uce_count_after}" >> "$result_file"
+done
+```
 
 
 
