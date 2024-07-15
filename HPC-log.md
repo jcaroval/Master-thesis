@@ -499,10 +499,4 @@ for bam_file in "$bam_dir"/*_RG_sorted_mapped.bam; do
 done
 ```
 
-
-
-
-
-
-
-
+5.22 Extract flanking regions (defined by coverage 8X ≤ N ≤ 50X)
