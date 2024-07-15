@@ -520,7 +520,7 @@ gatk HaplotypeCaller -R ./gatk/all-taxa-incomplete-no-dups.fasta -I EPT_A10_RG_s
 
 7. Different Approach (starting at 5.13)
 
-7.1 Create bam-lists per sampling-spot
+7.1 Create bam-lists per sampling-spot (do this for all sampling spots)
 
 ```
 ls EPT_A*_RG_sorted_mapped.bam > EPT_0A_bam_list.txt
@@ -528,7 +528,20 @@ ls EPT_A*_RG_sorted_mapped.bam > EPT_0A_bam_list.txt
 
 7.2 Create pileup files per sampling spot
 ```
-samtools mpileup -f all-taxa-incomplete-no-dups.fasta -b EPT_0A_bam_list.txt > EPT-0A.mpileup
+REFERENCE="all-taxa-incomplete-no-dups.fasta"
+for SAMPLE in {A..P}
+do
+    SAMPLE_ID="EPT_0${SAMPLE}"
+    BAM_LIST="${SAMPLE_ID}_bam_list.txt"
+    OUTPUT="${SAMPLE_ID}.mpileup"
+    
+    if [ -f "$BAM_LIST" ]; then
+        echo "Processing $SAMPLE_ID..."
+        samtools mpileup -f $REFERENCE -b $BAM_LIST > $OUTPUT
+    else
+        echo "BAM list for $SAMPLE_ID not found, skipping..."
+    fi
+done
 ```
 
 7.3 Filter coverage range
@@ -548,7 +561,6 @@ awk '$4 >= 40 && $4 <= 250 && $7 >= 40 && $7 <= 250 && $10 >= 40 && $10 <= 250 &
 awk '$4 >= 48 && $4 <= 300 && $7 >= 48 && $7 <= 300 && $10 >= 48 && $10 <= 300 && $13 >= 48 && $13 <= 300 && $16 >= 48 && $16 <= 300 && $19 >= 48 && $19 <= 300' EPT_0C.mpileup > EPT_0C_flanking.mpileup &
 
 wait
-
 ```
 
 
