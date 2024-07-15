@@ -500,3 +500,38 @@ done
 ```
 
 5.22 Extract flanking regions (defined by coverage 8X ≤ N ≤ 50X)
+…
+
+
+6. Different Approach (starting at 5.13) using gatk
+
+6.1 Extract flanking region (8X ≤ N ≤ 50X)
+
+```
+awk '$3 >= 8 && $3 <= 50 {print $1, $2-1, $2}' OFS='\t' EPT_A10_coverage.txt > EPT_A10_coverage_8X-50X.bed
+```
+
+
+6.2 Variant Calling
+```
+gatk HaplotypeCaller -R ./gatk/all-taxa-incomplete-no-dups.fasta -I EPT_A10_RG_sorted_mapped.bam -O EPT_A10_raw_variants.vcf
+```
+…
+
+7. Different Approach (starting at 5.13)
+
+7.1 Create bam-lists per sampling-spot
+
+```
+ls EPT_A*_RG_sorted_mapped.bam > EPT_0A_bam_list.txt
+```
+
+7.2 Create pileup files per sampling spot
+```
+samtools mpileup -f all-taxa-incomplete-no-dups.fasta -b EPT_0A_bam_list.txt -v > EPT-0A.vcf
+```
+
+
+
+
+
