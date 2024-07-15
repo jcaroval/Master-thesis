@@ -528,10 +528,13 @@ ls EPT_A*_RG_sorted_mapped.bam > EPT_0A_bam_list.txt
 
 7.2 Create pileup files per sampling spot
 ```
-samtools mpileup -f all-taxa-incomplete-no-dups.fasta -b EPT_0A_bam_list.txt -v > EPT-0A.vcf
+samtools mpileup -f all-taxa-incomplete-no-dups.fasta -b EPT_0A_bam_list.txt > EPT-0A.mpileup
 ```
 
-
+7.3 Filter coverage range
+```
+awk '$4 >= 8 && $4 <= 50 && $7 >= 8 && $7 <= 50 && $10 >= 8 && 10 <= 50 && $13 >= 8 && $13 <= 50 && $16 >= 8 && $16 <= 50 && $19 >= 8 && $19 <= 50' EPT-0A.mpileup > EPT-OA_flanking.mpileup
+```
 
 
 
