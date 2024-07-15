@@ -533,7 +533,22 @@ samtools mpileup -f all-taxa-incomplete-no-dups.fasta -b EPT_0A_bam_list.txt > E
 
 7.3 Filter coverage range
 ```
-awk '$4 >= 8 && $4 <= 50 && $7 >= 8 && $7 <= 50 && $10 >= 8 && 10 <= 50 && $13 >= 8 && $13 <= 50 && $16 >= 8 && $16 <= 50 && $19 >= 8 && $19 <= 50' EPT-0A.mpileup > EPT-OA_flanking.mpileup
+awk '$4 >= 8 && $4 <= 50' EPT_0L.mpileup > EPT_0L_flanking.mpileup &
+awk '$4 >= 8 && $4 <= 50' EPT_0N.mpileup > EPT_0N_flanking.mpileup &
+awk '$4 >= 16 && $4 <= 100 && $7 >= 16 && $7 <= 100' EPT_0H.mpileup > EPT_0H_flanking.mpileup &
+awk '$4 >= 16 && $4 <= 100 && $7 >= 16 && $7 <= 100' EPT_0P.mpileup > EPT_0P_flanking.mpileup &
+awk '$4 >= 24 && $4 <= 150 && $7 >= 24 && $7 <= 150 && $10 >= 24 && $10 <= 150' EPT_0B.mpileup > EPT_0B_flanking.mpileup &
+awk '$4 >= 24 && $4 <= 150 && $7 >= 24 && $7 <= 150 && $10 >= 24 && $10 <= 150' EPT_0D.mpileup > EPT_0D_flanking.mpileup &
+awk '$4 >= 24 && $4 <= 150 && $7 >= 24 && $7 <= 150 && $10 >= 24 && $10 <= 150' EPT_0J.mpileup > EPT_0J_flanking.mpileup &
+awk '$4 >= 32 && $4 <= 200 && $7 >= 32 && $7 <= 200 && $10 >= 32 && $10 <= 200 && $13 >= 32 && $13 <= 200' EPT_0A.mpileup > EPT_0A_flanking.mpileup &
+awk '$4 >= 40 && $4 <= 250 && $7 >= 40 && $7 <= 250 && $10 >= 40 && $10 <= 250 && $13 >= 40 && $13 <= 250 && $16 >= 40 && $16 <= 250' EPT_0E.mpileup > EPT_0E_flanking.mpileup &
+awk '$4 >= 40 && $4 <= 250 && $7 >= 40 && $7 <= 250 && $10 >= 40 && $10 <= 250 && $13 >= 40 && $13 <= 250 && $16 >= 40 && $16 <= 250' EPT_0F.mpileup > EPT_0F_flanking.mpileup &
+awk '$4 >= 40 && $4 <= 250 && $7 >= 40 && $7 <= 250 && $10 >= 40 && $10 <= 250 && $13 >= 40 && $13 <= 250 && $16 >= 40 && $16 <= 250' EPT_0I.mpileup > EPT_0I_flanking.mpileup &
+awk '$4 >= 40 && $4 <= 250 && $7 >= 40 && $7 <= 250 && $10 >= 40 && $10 <= 250 && $13 >= 40 && $13 <= 250 && $16 >= 40 && $16 <= 250' EPT_0O.mpileup > EPT_0O_flanking.mpileup &
+awk '$4 >= 48 && $4 <= 300 && $7 >= 48 && $7 <= 300 && $10 >= 48 && $10 <= 300 && $13 >= 48 && $13 <= 300 && $16 >= 48 && $16 <= 300 && $19 >= 48 && $19 <= 300' EPT_0C.mpileup > EPT_0C_flanking.mpileup &
+
+wait
+
 ```
 
 
