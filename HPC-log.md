@@ -568,7 +568,12 @@ wait
 python2 ../../environments/pileup_to_vcf/pileup_to_vcf-c0a6e8f595ec/pileup_to_vcf.py -i EPT_0A_flanking.mpileup -o EPT_0A_flanking_mpileup.vcf -I EPT_0A
 ```
 
-7.5 Index the vcf
+7.5 Zip and index the vcf
+
+```
+bgzip EPT_0A_flanking_mpileup.vcf
+```
+
 ```
 bcftools index -t EPT_0A_flanking_mpileup.vcf.gz
 ```
