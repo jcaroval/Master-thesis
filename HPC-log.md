@@ -568,5 +568,15 @@ wait
 python2 ../../environments/pileup_to_vcf/pileup_to_vcf-c0a6e8f595ec/pileup_to_vcf.py -i EPT_0A_flanking.mpileup -o EPT_0A_flanking_mpileup.vcf
 ```
 
+7.5 Index the vcf
+```
+bcftools index -t EPT_0A_flanking_mpileup.vcf.gz
+```
+… and run tabix
+```
+tabix *.vcf.gz
+```
+
+
 
 
