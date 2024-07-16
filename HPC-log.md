@@ -563,5 +563,10 @@ awk '$4 >= 48 && $4 <= 300 && $7 >= 48 && $7 <= 300 && $10 >= 48 && $10 <= 300 &
 wait
 ```
 
+7.4 Convert pileup to vcf (do this for every sampling spot)
+```
+python2 ../../environments/pileup_to_vcf/pileup_to_vcf-c0a6e8f595ec/pileup_to_vcf.py -i EPT_0A_flanking.mpileup -o EPT_0A_flanking_mpileup.vcf
+```
+
 
 
