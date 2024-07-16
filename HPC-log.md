@@ -528,40 +528,28 @@ ls EPT_A*_RG_sorted_mapped.bam > EPT_0A_bam_list.txt
 
 7.2 Create pileup files per sampling spot
 ```
-REFERENCE="all-taxa-incomplete-no-dups.fasta"
-for SAMPLE in {A..P}
-do
-    SAMPLE_ID="EPT_0${SAMPLE}"
-    BAM_LIST="${SAMPLE_ID}_bam_list.txt"
-    OUTPUT="${SAMPLE_ID}_mpileup_bcftools.bcf"
-    
-    if [ -f "$BAM_LIST" ]; then
-        echo "Processing $SAMPLE_ID..."
-        bcftools mpileup -f $REFERENCE -b $BAM_LIST | bcftools call -m -Oz -f GQ -o $OUTPUT
-    else
-        echo "BAM list for $SAMPLE_ID not found, skipping..."
-    fi
-done
+bcftools mpileup -f ../../../10.UCE_index/all-taxa-incomplete-no-dups.fasta -b ../EPT_0A_bam_list.txt | bcftools call -m -Ou -f GQ -o EPT_0A_mpileup_bcftools.bcf
 ```
 
 7.3 Filter coverage range
 ```
-awk '$4 >= 8 && $4 <= 50' EPT_0L.mpileup > EPT_0L_flanking.mpileup &
-awk '$4 >= 8 && $4 <= 50' EPT_0N.mpileup > EPT_0N_flanking.mpileup &
-awk '$4 >= 16 && $4 <= 100 && $7 >= 16 && $7 <= 100' EPT_0H.mpileup > EPT_0H_flanking.mpileup &
-awk '$4 >= 16 && $4 <= 100 && $7 >= 16 && $7 <= 100' EPT_0P.mpileup > EPT_0P_flanking.mpileup &
-awk '$4 >= 24 && $4 <= 150 && $7 >= 24 && $7 <= 150 && $10 >= 24 && $10 <= 150' EPT_0B.mpileup > EPT_0B_flanking.mpileup &
-awk '$4 >= 24 && $4 <= 150 && $7 >= 24 && $7 <= 150 && $10 >= 24 && $10 <= 150' EPT_0D.mpileup > EPT_0D_flanking.mpileup &
-awk '$4 >= 24 && $4 <= 150 && $7 >= 24 && $7 <= 150 && $10 >= 24 && $10 <= 150' EPT_0J.mpileup > EPT_0J_flanking.mpileup &
-awk '$4 >= 32 && $4 <= 200 && $7 >= 32 && $7 <= 200 && $10 >= 32 && $10 <= 200 && $13 >= 32 && $13 <= 200' EPT_0A.mpileup > EPT_0A_flanking.mpileup &
-awk '$4 >= 40 && $4 <= 250 && $7 >= 40 && $7 <= 250 && $10 >= 40 && $10 <= 250 && $13 >= 40 && $13 <= 250 && $16 >= 40 && $16 <= 250' EPT_0E.mpileup > EPT_0E_flanking.mpileup &
-awk '$4 >= 40 && $4 <= 250 && $7 >= 40 && $7 <= 250 && $10 >= 40 && $10 <= 250 && $13 >= 40 && $13 <= 250 && $16 >= 40 && $16 <= 250' EPT_0F.mpileup > EPT_0F_flanking.mpileup &
-awk '$4 >= 40 && $4 <= 250 && $7 >= 40 && $7 <= 250 && $10 >= 40 && $10 <= 250 && $13 >= 40 && $13 <= 250 && $16 >= 40 && $16 <= 250' EPT_0I.mpileup > EPT_0I_flanking.mpileup &
-awk '$4 >= 40 && $4 <= 250 && $7 >= 40 && $7 <= 250 && $10 >= 40 && $10 <= 250 && $13 >= 40 && $13 <= 250 && $16 >= 40 && $16 <= 250' EPT_0O.mpileup > EPT_0O_flanking.mpileup &
-awk '$4 >= 48 && $4 <= 300 && $7 >= 48 && $7 <= 300 && $10 >= 48 && $10 <= 300 && $13 >= 48 && $13 <= 300 && $16 >= 48 && $16 <= 300 && $19 >= 48 && $19 <= 300' EPT_0C.mpileup > EPT_0C_flanking.mpileup &
+bcftools filter -i 'INFO/DP>=8 && INFO/DP<=50' -Oz -o EPT_0L_filtered.bcf EPT_0L_mpileup_bcftools.bcf &
+bcftools filter -i 'INFO/DP>=8 && INFO/DP<=50' -Oz -o EPT_0N_filtered.bcf EPT_0N_mpileup_bcftools.bcf &
+bcftools filter -i 'INFO/DP>=16 && INFO/DP<=100' -Oz -o EPT_0H_filtered.bcf EPT_0H_mpileup_bcftools.bcf &
+bcftools filter -i 'INFO/DP>=16 && INFO/DP<=100' -Oz -o EPT_0P_filtered.bcf EPT_0P_mpileup_bcftools.bcf &
+bcftools filter -i 'INFO/DP>=24 && INFO/DP<=150' -Oz -o EPT_0B_filtered.bcf EPT_0B_mpileup_bcftools.bcf &
+bcftools filter -i 'INFO/DP>=24 && INFO/DP<=150' -Oz -o EPT_0D_filtered.bcf EPT_0D_mpileup_bcftools.bcf &
+bcftools filter -i 'INFO/DP>=24 && INFO/DP<=150' -Oz -o EPT_0J_filtered.bcf EPT_0J_mpileup_bcftools.bcf &
+bcftools filter -i 'INFO/DP>=32 && INFO/DP<=200' -Oz -o EPT_0A_filtered.bcf EPT_0A_mpileup_bcftools.bcf &
+bcftools filter -i 'INFO/DP>=40 && INFO/DP<=250' -Oz -o EPT_0E_filtered.bcf EPT_0E_mpileup_bcftools.bcf &
+bcftools filter -i 'INFO/DP>=40 && INFO/DP<=250' -Oz -o EPT_0F_filtered.bcf EPT_0F_mpileup_bcftools.bcf &
+bcftools filter -i 'INFO/DP>=40 && INFO/DP<=250' -Oz -o EPT_0I_filtered.bcf EPT_0I_mpileup_bcftools.bcf &
+bcftools filter -i 'INFO/DP>=40 && INFO/DP<=250' -Oz -o EPT_0O_filtered.bcf EPT_0O_mpileup_bcftools.bcf &
+bcftools filter -i 'INFO/DP>=48 && INFO/DP<=300' -Oz -o EPT_0C_filtered.bcf EPT_0C_mpileup_bcftools.bcf &
 
 wait
 ```
+
 
 7.4 Convert pileup to vcf (do this for every sampling spot)
 ```
