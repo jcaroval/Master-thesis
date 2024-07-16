@@ -528,48 +528,48 @@ ls EPT_A*_RG_sorted_mapped.bam > EPT_0A_bam_list.txt
 
 7.2 Create pileup files per sampling spot
 ```
-bcftools mpileup -f ../../../10.UCE_index/all-taxa-incomplete-no-dups.fasta -b ../EPT_0A_bam_list.txt | bcftools call -m -Ou -f GQ -o EPT_0A_mpileup_bcftools.bcf
+bcftools mpileup -f ../../../10.UCE_index/all-taxa-incomplete-no-dups.fasta -b ../EPT_0A_bam_list.txt | bcftools call -m -Oz -f GQ -o EPT_0A_mpileup_bcftools.vcf
 ```
 
 7.3 Filter coverage range
 ```
-bcftools filter -i 'INFO/DP>=8 && INFO/DP<=50' -Oz -o EPT_0L_filtered.bcf EPT_0L_mpileup_bcftools.bcf &
-bcftools filter -i 'INFO/DP>=8 && INFO/DP<=50' -Oz -o EPT_0N_filtered.bcf EPT_0N_mpileup_bcftools.bcf &
-bcftools filter -i 'INFO/DP>=16 && INFO/DP<=100' -Oz -o EPT_0H_filtered.bcf EPT_0H_mpileup_bcftools.bcf &
-bcftools filter -i 'INFO/DP>=16 && INFO/DP<=100' -Oz -o EPT_0P_filtered.bcf EPT_0P_mpileup_bcftools.bcf &
-bcftools filter -i 'INFO/DP>=24 && INFO/DP<=150' -Oz -o EPT_0B_filtered.bcf EPT_0B_mpileup_bcftools.bcf &
-bcftools filter -i 'INFO/DP>=24 && INFO/DP<=150' -Oz -o EPT_0D_filtered.bcf EPT_0D_mpileup_bcftools.bcf &
-bcftools filter -i 'INFO/DP>=24 && INFO/DP<=150' -Oz -o EPT_0J_filtered.bcf EPT_0J_mpileup_bcftools.bcf &
-bcftools filter -i 'INFO/DP>=32 && INFO/DP<=200' -Oz -o EPT_0A_filtered.bcf EPT_0A_mpileup_bcftools.bcf &
-bcftools filter -i 'INFO/DP>=40 && INFO/DP<=250' -Oz -o EPT_0E_filtered.bcf EPT_0E_mpileup_bcftools.bcf &
-bcftools filter -i 'INFO/DP>=40 && INFO/DP<=250' -Oz -o EPT_0F_filtered.bcf EPT_0F_mpileup_bcftools.bcf &
-bcftools filter -i 'INFO/DP>=40 && INFO/DP<=250' -Oz -o EPT_0I_filtered.bcf EPT_0I_mpileup_bcftools.bcf &
-bcftools filter -i 'INFO/DP>=40 && INFO/DP<=250' -Oz -o EPT_0O_filtered.bcf EPT_0O_mpileup_bcftools.bcf &
-bcftools filter -i 'INFO/DP>=48 && INFO/DP<=300' -Oz -o EPT_0C_filtered.bcf EPT_0C_mpileup_bcftools.bcf &
+bcftools filter -i 'INFO/DP>=8 && INFO/DP<=50' -Oz -o EPT_0L_filtered.vcf EPT_0L_mpileup_bcftools.vcf &
+bcftools filter -i 'INFO/DP>=8 && INFO/DP<=50' -Oz -o EPT_0N_filtered.vcf EPT_0N_mpileup_bcftools.vcf &
+bcftools filter -i 'INFO/DP>=16 && INFO/DP<=100' -Oz -o EPT_0H_filtered.vcf EPT_0H_mpileup_bcftools.vcf &
+bcftools filter -i 'INFO/DP>=16 && INFO/DP<=100' -Oz -o EPT_0P_filtered.vcf EPT_0P_mpileup_bcftools.vcf &
+bcftools filter -i 'INFO/DP>=24 && INFO/DP<=150' -Oz -o EPT_0B_filtered.vcf EPT_0B_mpileup_bcftools.vcf &
+bcftools filter -i 'INFO/DP>=24 && INFO/DP<=150' -Oz -o EPT_0D_filtered.vcf EPT_0D_mpileup_bcftools.vcf &
+bcftools filter -i 'INFO/DP>=24 && INFO/DP<=150' -Oz -o EPT_0J_filtered.vcf EPT_0J_mpileup_bcftools.vcf &
+bcftools filter -i 'INFO/DP>=32 && INFO/DP<=200' -Oz -o EPT_0A_filtered.vcf EPT_0A_mpileup_bcftools.vcf &
+bcftools filter -i 'INFO/DP>=40 && INFO/DP<=250' -Oz -o EPT_0E_filtered.vcf EPT_0E_mpileup_bcftools.vcf &
+bcftools filter -i 'INFO/DP>=40 && INFO/DP<=250' -Oz -o EPT_0F_filtered.vcf EPT_0F_mpileup_bcftools.vcf &
+bcftools filter -i 'INFO/DP>=40 && INFO/DP<=250' -Oz -o EPT_0I_filtered.vcf EPT_0I_mpileup_bcftools.vcf &
+bcftools filter -i 'INFO/DP>=40 && INFO/DP<=250' -Oz -o EPT_0O_filtered.vcf EPT_0O_mpileup_bcftools.vcf &
+bcftools filter -i 'INFO/DP>=48 && INFO/DP<=300' -Oz -o EPT_0C_filtered.vcf EPT_0C_mpileup_bcftools.vcf &
 
 wait
 ```
 
-
-7.4 Convert pileup to vcf (do this for every sampling spot)
+7.4 Merge all vcf files
 ```
-python2 ../../environments/pileup_to_vcf/pileup_to_vcf-c0a6e8f595ec/pileup_to_vcf.py -i EPT_0A_flanking.mpileup -o EPT_0A_flanking_mpileup.vcf -I EPT_0A
+bcftools merge --threads 64 -Oz -o merged_samplingspots.vcf *_filtered.vcf.gz
 ```
 
 7.5 Zip and index the vcf
 
 ```
-bgzip EPT_0A_flanking_mpileup.vcf
+bgzip EPT_0A_mpileup_bcftools.vcf
 ```
 
-```
-bcftools index -t EPT_0A_flanking_mpileup.vcf.gz
-```
 … and run tabix
 ```
 tabix *.vcf.gz
 ```
 
+7.6 Create populations file
+…
 
-
-
+7.7 Run pixy
+```
+pixy --stats pi --vcf merged_samplingspots.vcf.gz --populations ../populations_file.txt --window_size 10 --n_cores 500 --output_folder ./pi_window10
+```
