@@ -565,7 +565,7 @@ wait
 
 7.4 Convert pileup to vcf (do this for every sampling spot)
 ```
-python2 ../../environments/pileup_to_vcf/pileup_to_vcf-c0a6e8f595ec/pileup_to_vcf.py -i EPT_0A_flanking.mpileup -o EPT_0A_flanking_mpileup.vcf
+python2 ../../environments/pileup_to_vcf/pileup_to_vcf-c0a6e8f595ec/pileup_to_vcf.py -i EPT_0A_flanking.mpileup -o EPT_0A_flanking_mpileup.vcf -I EPT_0A
 ```
 
 7.5 Index the vcf
