@@ -533,11 +533,11 @@ for SAMPLE in {A..P}
 do
     SAMPLE_ID="EPT_0${SAMPLE}"
     BAM_LIST="${SAMPLE_ID}_bam_list.txt"
-    OUTPUT="${SAMPLE_ID}.mpileup"
+    OUTPUT="${SAMPLE_ID}_mpileup_bcftools.bcf"
     
     if [ -f "$BAM_LIST" ]; then
         echo "Processing $SAMPLE_ID..."
-        samtools mpileup -f $REFERENCE -b $BAM_LIST > $OUTPUT
+        bcftools mpileup -f $REFERENCE -b $BAM_LIST | bcftools call -m -Oz -f GQ -o $OUTPUT
     else
         echo "BAM list for $SAMPLE_ID not found, skipping..."
     fi
