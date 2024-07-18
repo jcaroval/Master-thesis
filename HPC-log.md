@@ -595,8 +595,3 @@ pixy --stats pi --vcf EPT_all_filtered_modified.vcf.gz --populations ../populati
 pixy --stats dxy --vcf EPT_all_filtered_modified.vcf.gz --populations ../populations_file.txt --window_size 10000 --n_cores 64 --output_prefix windowsize10000
 ```
 
-7.9 Calculate FST (optional)less p
-```
-pixy --stats fst --vcf EPT_all_filtered_modified.vcf.gz --populations ../populations_file.txt --window_size 10000 --n_cores 64 --output_prefix windowsize10000
-```
-
