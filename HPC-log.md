@@ -583,13 +583,20 @@ bgzip EPT_all_filtered_modified.vcf #optional, as this was already done in the r
 tabix EPT_all_filtered_modified.vcf.gz
 ```
 
-7.6 Create populations file
+7.6 Create populations file (containing all sample IDs in column 1 and their regarding sampling spots in column 2)
 
-7.7 Run pixy
+7.7 Calculate within population nucleotide diversity (pi). The window_size is set to 10000 so that it always calculates for the whole UCE.
 ```
-pixy --stats pi --vcf merged_samplingspots.vcf.gz --populations ../populations_file.txt --window_size 10 --n_cores 64 --output_folder ./pi_window10
+pixy --stats pi --vcf EPT_all_filtered_modified.vcf.gz --populations ../populations_file.txt --window_size 10000 --n_cores 64 --output_prefix windowsize10000
 ```
 
+7.8 Calculate between population nucleotide divergence (dxy)
 ```
-pixy --stats pi --vcf EPT_all_filtered.vcf.gz --populations ../populations_file.txt --window_size 10 --n_cores 64 --output_folder ./pi_window10
+pixy --stats dxy --vcf EPT_all_filtered_modified.vcf.gz --populations ../populations_file.txt --window_size 10000 --n_cores 64 --output_prefix windowsize10000
 ```
+
+7.9 Calculate FST (optional)less p
+```
+pixy --stats fst --vcf EPT_all_filtered_modified.vcf.gz --populations ../populations_file.txt --window_size 10000 --n_cores 64 --output_prefix windowsize10000
+```
+
