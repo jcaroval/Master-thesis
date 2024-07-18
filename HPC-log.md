@@ -559,11 +559,14 @@ bcftools filter -i 'INFO/DP>=48 && INFO/DP<=300' -Oz -o EPT_0C_filtered.vcf EPT_
 
 wait
 ```
+bcftools filter -i 'INFO/DP>=8 && INFO/DP<=50' -Oz -o EPT_all_filtered.vcf EPT_all_mpileup_bcftools.vcf
+```
 
 7.4 Merge all vcf files
 ```
 bcftools merge --threads 64 -Oz -o merged_samplingspots.vcf *_filtered.vcf.gz
 ```
+… skip
 
 7.5 Zip and index the vcf
 
@@ -577,9 +580,12 @@ tabix *.vcf.gz
 ```
 
 7.6 Create populations file
-…
 
 7.7 Run pixy
 ```
 pixy --stats pi --vcf merged_samplingspots.vcf.gz --populations ../populations_file.txt --window_size 10 --n_cores 500 --output_folder ./pi_window10
+```
+
+```
+pixy --stats pi --vcf EPT_all_mpileup_bcftools.vcf.gz --populations ../populations_file.txt --window_size 10 --n_cores 500 --output_folder ./pi_window10
 ```
