@@ -584,9 +584,9 @@ tabix *.vcf.gz
 
 7.7 Run pixy
 ```
-pixy --stats pi --vcf merged_samplingspots.vcf.gz --populations ../populations_file.txt --window_size 10 --n_cores 500 --output_folder ./pi_window10
+pixy --stats pi --vcf merged_samplingspots.vcf.gz --populations ../populations_file.txt --window_size 10 --n_cores 64 --output_folder ./pi_window10
 ```
 
 ```
-pixy --stats pi --vcf EPT_all_mpileup_bcftools.vcf.gz --populations ../populations_file.txt --window_size 10 --n_cores 500 --output_folder ./pi_window10
+pixy --stats pi --vcf EPT_all_mpileup_bcftools.vcf.gz --populations ../populations_file.txt --window_size 10 --n_cores 64 --output_folder ./pi_window10
 ```
