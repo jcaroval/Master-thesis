@@ -575,12 +575,12 @@ echo "Modified VCF file saved to $output_vcf"
 7.5 Zip and index the vcf
 
 ```
-bgzip EPT_0A_mpileup_bcftools.vcf
+bgzip EPT_all_filtered_modified.vcf #optional, as this was already done in the relocation-script 
 ```
 
 … and run tabix
 ```
-tabix *.vcf.gz
+tabix EPT_all_filtered_modified.vcf.gz
 ```
 
 7.6 Create populations file
