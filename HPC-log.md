@@ -525,11 +525,21 @@ gatk HaplotypeCaller -R ./gatk/all-taxa-incomplete-no-dups.fasta -I EPT_A10_RG_s
 ```
 ls EPT_A*_RG_sorted_mapped.bam > EPT_0A_bam_list.txt
 ```
+```
+ls *_RG_sorted_mapped.bam > EPT_all_bam_list.txt
+```
+
 
 7.2 Create pileup files per sampling spot
 ```
 bcftools mpileup -f ../../../10.UCE_index/all-taxa-incomplete-no-dups.fasta -b ../EPT_0A_bam_list.txt | bcftools call -m -Oz -f GQ -o EPT_0A_mpileup_bcftools.vcf
 ```
+
+```
+bcftools mpileup -f ../../../10.UCE_index/all-taxa-incomplete-no-dups.fasta -b EPT_all_bam_list.txt --threads 64 | bcftools call -m -Oz -f GQ -o EPT_all_mpileup_bcftools.vcf --threads 64
+```
+
+
 
 7.3 Filter coverage range
 ```
