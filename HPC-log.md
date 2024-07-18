@@ -499,75 +499,78 @@ for bam_file in "$bam_dir"/*_RG_sorted_mapped.bam; do
 done
 ```
 
-5.22 Extract flanking regions (defined by coverage 8X ≤ N ≤ 50X)
-…
-
-
-6. Different Approach (starting at 5.13) using gatk
-
-6.1 Extract flanking region (8X ≤ N ≤ 50X)
-
-```
-awk '$3 >= 8 && $3 <= 50 {print $1, $2-1, $2}' OFS='\t' EPT_A10_coverage.txt > EPT_A10_coverage_8X-50X.bed
-```
-
-
-6.2 Variant Calling
-```
-gatk HaplotypeCaller -R ./gatk/all-taxa-incomplete-no-dups.fasta -I EPT_A10_RG_sorted_mapped.bam -O EPT_A10_raw_variants.vcf
-```
-…
-
 7. Different Approach (starting at 5.13)
 
 7.1 Create bam-lists per sampling-spot (do this for all sampling spots)
-
-```
-ls EPT_A*_RG_sorted_mapped.bam > EPT_0A_bam_list.txt
-```
 ```
 ls *_RG_sorted_mapped.bam > EPT_all_bam_list.txt
 ```
 
-
 7.2 Create pileup files per sampling spot
-```
-bcftools mpileup -f ../../../10.UCE_index/all-taxa-incomplete-no-dups.fasta -b ../EPT_0A_bam_list.txt | bcftools call -m -Oz -f GQ -o EPT_0A_mpileup_bcftools.vcf
-```
-
 ```
 bcftools mpileup -f ../../../10.UCE_index/all-taxa-incomplete-no-dups.fasta -b EPT_all_bam_list.txt --threads 64 | bcftools call -m -Oz -f GQ -o EPT_all_mpileup_bcftools.vcf --threads 64
 ```
 
-
-
 7.3 Filter coverage range
-```
-bcftools filter -i 'INFO/DP>=8 && INFO/DP<=50' -Oz -o EPT_0L_filtered.vcf EPT_0L_mpileup_bcftools.vcf &
-bcftools filter -i 'INFO/DP>=8 && INFO/DP<=50' -Oz -o EPT_0N_filtered.vcf EPT_0N_mpileup_bcftools.vcf &
-bcftools filter -i 'INFO/DP>=16 && INFO/DP<=100' -Oz -o EPT_0H_filtered.vcf EPT_0H_mpileup_bcftools.vcf &
-bcftools filter -i 'INFO/DP>=16 && INFO/DP<=100' -Oz -o EPT_0P_filtered.vcf EPT_0P_mpileup_bcftools.vcf &
-bcftools filter -i 'INFO/DP>=24 && INFO/DP<=150' -Oz -o EPT_0B_filtered.vcf EPT_0B_mpileup_bcftools.vcf &
-bcftools filter -i 'INFO/DP>=24 && INFO/DP<=150' -Oz -o EPT_0D_filtered.vcf EPT_0D_mpileup_bcftools.vcf &
-bcftools filter -i 'INFO/DP>=24 && INFO/DP<=150' -Oz -o EPT_0J_filtered.vcf EPT_0J_mpileup_bcftools.vcf &
-bcftools filter -i 'INFO/DP>=32 && INFO/DP<=200' -Oz -o EPT_0A_filtered.vcf EPT_0A_mpileup_bcftools.vcf &
-bcftools filter -i 'INFO/DP>=40 && INFO/DP<=250' -Oz -o EPT_0E_filtered.vcf EPT_0E_mpileup_bcftools.vcf &
-bcftools filter -i 'INFO/DP>=40 && INFO/DP<=250' -Oz -o EPT_0F_filtered.vcf EPT_0F_mpileup_bcftools.vcf &
-bcftools filter -i 'INFO/DP>=40 && INFO/DP<=250' -Oz -o EPT_0I_filtered.vcf EPT_0I_mpileup_bcftools.vcf &
-bcftools filter -i 'INFO/DP>=40 && INFO/DP<=250' -Oz -o EPT_0O_filtered.vcf EPT_0O_mpileup_bcftools.vcf &
-bcftools filter -i 'INFO/DP>=48 && INFO/DP<=300' -Oz -o EPT_0C_filtered.vcf EPT_0C_mpileup_bcftools.vcf &
-
-wait
-```
 ```
 bcftools filter -i 'INFO/DP>=8 && INFO/DP<=50' -Oz -o EPT_all_filtered.vcf EPT_all_mpileup_bcftools.vcf --threads 64
 ```
 
-7.4 Merge all vcf files
+7.4 Relocate the DP content (as the default position within the dataset could not be found by pixy)
 ```
-bcftools merge --threads 64 -Oz -o merged_samplingspots.vcf *_filtered.vcf.gz
+input_vcf="EPT_all_filtered.vcf.gz"
+output_vcf="EPT_all_filtered_modified.vcf.gz"
+# Create a temporary file
+temp_file=$(mktemp)
+# Process the VCF file
+while read -r line; do
+    if [[ $line == \#\#* ]]; then
+        # Meta-information lines
+        echo "$line" >> "$temp_file"
+    elif [[ $line == \#CHROM* ]]; then
+        # Header line
+        IFS=$'\t' read -r -a headers <<< "$line"
+        echo "$line" >> "$temp_file"
+    else
+        # Data lines
+        IFS=$'\t' read -r -a columns <<< "$line"
+        info_field=${columns[7]}
+        format_field=${columns[8]}
+        sample_fields=("${columns[@]:9}")
+        # Extract DP from INFO field
+        dp_value="."
+        new_info_field=""
+        IFS=';' read -r -a info_items <<< "$info_field"
+        for item in "${info_items[@]}"; do
+            if [[ $item == DP=* ]]; then
+                dp_value=${item#DP=}
+            else
+                if [ -n "$new_info_field" ]; then
+                    new_info_field+=";"
+                fi
+                new_info_field+="$item"
+            fi
+        done
+        # Modify FORMAT and sample fields
+        if [[ $format_field != DP ]]; then
+            format_field+=":DP"
+        fi
+        for i in "${!sample_fields[@]}"; do
+            sample_fields[$i]+=":$dp_value"
+        done
+        # Write the modified line
+        columns[7]=$new_info_field
+        columns[8]=$format_field
+        columns=("${columns[@]:0:9}" "${sample_fields[@]}")
+        echo -e "${columns[*]}" | tr ' ' '\t' >> "$temp_file"
+    fi
+done < <(zcat "$input_vcf")
+# Move the temporary file to the output file
+bgzip -c "$temp_file" > "$output_vcf"
+rm "$temp_file"
+echo "Modified VCF file saved to $output_vcf"
 ```
-… skip
+
 
 7.5 Zip and index the vcf
 
