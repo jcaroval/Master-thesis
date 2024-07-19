@@ -550,25 +550,25 @@ done
 
 <h1>6. pixy (starting at 5.13)</h1>
 
-<h2>7.1 Create bam-lists per sampling-spot (do this for all sampling spots)</h2>
+<h2>6.1 Create bam-lists per sampling-spot (do this for all sampling spots)</h2>
 
 ```
 ls *_RG_sorted_mapped.bam > EPT_all_bam_list.txt
 ```
 
-<h2>7.2 Create pileup files per sampling spot</h2>
+<h2>6.2 Create pileup files per sampling spot</h2>
 
 ```
 bcftools mpileup -f ../../../10.UCE_index/all-taxa-incomplete-no-dups.fasta -b EPT_all_bam_list.txt --threads 64 | bcftools call -m -Oz -f GQ -o EPT_all_mpileup_bcftools.vcf --threads 64
 ```
 
-<h2>7.3 Filter coverage range</h2>
+<h2>6.3 Filter coverage range</h2>
 
 ```
 bcftools filter -i 'INFO/DP>=8 && INFO/DP<=50' -Oz -o EPT_all_filtered.vcf EPT_all_mpileup_bcftools.vcf --threads 64
 ```
 
-<h2>7.4 Relocate the DP content (as the default position within the dataset could not be found by pixy)</h2>
+<h2>6.4 Relocate the DP content (as the default position within the dataset could not be found by pixy)</h2>
 
 ```
 input_vcf="EPT_all_filtered.vcf.gz"
@@ -625,7 +625,7 @@ echo "Modified VCF file saved to $output_vcf"
 ```
 
 
-<h2>7.5 Zip and index the vcf</h2>
+<h2>6.5 Zip and index the vcf</h2>
 
 ```
 bgzip EPT_all_filtered_modified.vcf #optional, as this was already done in the relocation-script 
@@ -636,16 +636,15 @@ bgzip EPT_all_filtered_modified.vcf #optional, as this was already done in the r
 tabix EPT_all_filtered_modified.vcf.gz
 ```
 
-<h2>7.6 Create populations file (containing all sample IDs in column 1 and their regarding sampling spots in column 2)</h2>
+<h2>6.6 Create populations file (containing all sample IDs in column 1 and their regarding sampling spots in column 2)</h2>
 
-<h2>7.7 Calculate within population nucleotide diversity (pi). The window_size is set to 10000 so that it always calculates for the whole UCE.</h2>
+<h2>6.7 Calculate within population nucleotide diversity (pi). The window_size is set to 10000 so that it always calculates for the whole UCE.</h2>
 
 ```
 pixy --stats pi --vcf EPT_all_filtered_modified.vcf.gz --populations ../populations_file.txt --window_size 10000 --n_cores 64 --output_prefix windowsize10000
 ```
 
-<h2>7.8 Calculate between population nucleotide divergence (dxy)</h2>
-
+<h2>6.8 Calculate between population nucleotide divergence (dxy)</h2>
 ```
 pixy --stats dxy --vcf EPT_all_filtered_modified.vcf.gz --populations ../populations_file.txt --window_size 10000 --n_cores 64 --output_prefix windowsize10000
 ```
