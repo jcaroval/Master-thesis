@@ -6,27 +6,27 @@
 Note: The probes were designed by Laura Villegas based on 7 different <i>Panagrolaimus</i> sp.
 
 <h1>Tools</h1> 
-<ul> • <tt>bcftools (V1.18)</tt></ul>
-<ul> • <tt>blastn (V2.14.1)</tt></ul>     
-<ul> • <tt>blobtoolkit (V4.3.5)</tt></ul>     
-<ul> • <tt>BUSCO (V5.7.1)</tt></ul> 
-<ul> • <tt>bwa-mem2 (V2.2.1)</tt></ul> 
+<ul> • <tt>bcftools (V1.18)</tt> | Danecek et al., 2021</ul>
+<ul> • <tt>BLAST+ (V2.14.1)</tt> | Camacho et al., 2009</ul>     
+<ul> • <tt>blobtoolkit (V4.3.5)</tt> | Challis et al, 2019</ul>     
+<ul> • <tt>BUSCO (V5.7.1)</tt> | Manni et al., 2021</ul> 
+<ul> • <tt>bwa-mem2 (V2.2.1)</tt> | Vasimuddin et al., 2019</ul> 
 <ul> • <tt>Conda (V23.3.1/V4.9.2)</tt></ul> 
-<ul> • <tt>fastp (V0.23.2)</tt></ul> 
-<ul> • <tt>IGV (V2.16.2)</tt></ul> 
-<ul> • <tt>minimap2 (V2.26-r1175)</tt></ul> 
-<ul> • <tt>MultiQC (V1.0.dev0)</tt></ul> 
-<ul> • <tt>nextgenmap (V0.5.5)</tt></ul> 
-<ul> • <tt>Phyluce (V1.7.3)</tt></ul> 
-<ul> • <tt>Picard (V2.27.5)</tt></ul> 
-<ul> • <tt>Pixy (V1.2.10.beta2)</tt></ul> 
-<ul> • <tt>Platanus-allee (V2.2.2)</tt></ul> 
-<ul> • <tt>QualiMap (V2.2.2-dev)</tt></ul> 
-<ul> • <tt>samtools (V1.18)</tt></ul> 
-<ul> • <tt>seqkit (V2.5.1)</tt></ul> 
-<ul> • <tt>seqtk (V1.2-r94)</tt></ul> 
-<ul> • <tt>SPAdes (V3.13.0)</tt></ul> 
-<ul> • <tt>Tablet (V1.21.02.08)</tt></ul> 
+<ul> • <tt>fastp (V0.23.2)</tt> | Chen et al., 2018</ul> 
+<ul> • <tt>IGV (V2.16.2)</tt> | Robinson et al., 2011</ul> 
+<ul> • <tt>minimap2 (V2.26-r1175)</tt> | Li, 2018</ul> 
+<ul> • <tt>MultiQC (V1.0.dev0)</tt> | Ewels et al., 2016</ul> 
+<ul> • <tt>nextgenmap (V0.5.5)</tt> | Sedlazeck et al., 2013</ul> 
+<ul> • <tt>Phyluce (V1.7.3)</tt> | Faircloth, 2016</ul> 
+<ul> • <tt>Picard (V2.27.5)</tt> | Broad Institute, 2019</ul> 
+<ul> • <tt>Pixy (V1.2.10.beta2)</tt> | Korunes and Samuk, 2021</ul> 
+<ul> • <tt>Platanus-allee (V2.2.2)</tt> | Kajitani et al., 2019</ul> 
+<ul> • <tt>QualiMap (V2.2.2-dev)</tt> | García-Alcalde, 2012</ul> 
+<ul> • <tt>samtools (V1.18)</tt> | Danecek et al., 2021</ul> 
+<ul> • <tt>seqkit (V2.5.1)</tt> | Shen et al., 2016</ul> 
+<ul> • <tt>seqtk (V1.2-r94)</tt> | Li, 2012</ul> 
+<ul> • <tt>SPAdes (V3.13.0)</tt> | Prjibelski et al., 2020</ul> 
+<ul> • <tt>Tablet (V1.21.02.08)</tt> | Milne et al., 2013</ul> 
 
 
 <h1>1. Data Curation and Quality</h1> 
