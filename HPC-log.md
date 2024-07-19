@@ -1,6 +1,6 @@
 <h1> Aim </h1>  
 <h1>Data</h1> 
-<ul> • 45 Illumina Short-Read (PE150) Samples (<i>Acrobeles emmatus</i>) </ul> 
+<ul> • 45 Illumina short-read (PE150) samples (<i>Acrobeles emmatus</i>) </ul> 
 <ul> • 1 Reference genome (<i>Acrobeloides tricornis</i>) </ul> 
 <ul> • 1 UCE probe list (containing probes for 1606 different uces) </ul> 
 Note: The probes were designed by Laura Villegas based on 7 different <i>Panagrolaimus</i> sp.
