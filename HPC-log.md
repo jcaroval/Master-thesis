@@ -523,7 +523,6 @@ and sort them by value
 ```
 sort -n -k2 "merged_average_coverages.txt" > "merged_sorted_average_coverages.txt"
 ```
-Here, a threshold was set to an average coverage of 360. This threshold was chosen because a minimum threshold of 8X per individual was desired. With 45 individuals, it can be assumed that UCEs with a coverage below 360 do not lead to sufficient results.
 
 <h2>5.20 Remove the low-coverage UCEs from the files.</h2>
 
