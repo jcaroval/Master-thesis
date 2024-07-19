@@ -15,7 +15,9 @@ wget URL
 tar -xvf filename.tar
 ```
 
-<h2>1.2 Calculate and compare MD5sums. They should resemble the MD5sums that were provided by Novogene.</h2> 
+<h2>1.2 Calculate and compare MD5sums.</h2> 
+
+They MD5sums resemble those that were provided by Novogene.
 
 ```
 find . -type f -name '*.fq.gz' | while read -r file; do
@@ -23,8 +25,9 @@ echo "current file: $file"
 md5sum "$file" >> md5sums.txt;
 done
 ```
-<h2> 1.3 Create MultiQC files to investigate the quality of the raw files.</h2> 
+<h2> 1.3 Create MultiQC files</h2> 
 
+This is done to investigate the quality of the raw files before trimming.
 ```
 multiqc *.fq.gz
 ```
@@ -44,10 +47,12 @@ done
 <h2> 1.5 Repeat step 1.3 (MultiQC) on the trimmed files.</h2> 
 
 ```
-multiqc *.fq.gz
+multiqc *_trimmed_*.fq.gz
 ```
 
-<h1> 2. Reference-based Genome Alignments (cross-species mapping against of Acrobeles emmatus against Acrobeloides tricornis)</h1> 
+<h1> 2. Reference-based Genome Alignments </h1> 
+
+Since there is no reference genome of <i>Acrobeles emmatus</i> yet, a cross-species mapping against of <i>Acrobeles emmatus</i> against <i>Acrobeloides tricornis</i> was proceeded.
 
 <h2> 2.1 Mapping with bwa-mem2</h2> 
 
