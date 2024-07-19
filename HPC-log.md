@@ -1,8 +1,8 @@
 <h1> Aim </h1>  
 <h1>Content</h1> 
-<ul> 45 Illumina Short-Read (PE150) Samples (<i>Acrobeles emmatus</i>) </ul> 
-<ul>1 Reference Genome (<i>Acrobeloides tricornis</i>) </ul> 
-<ul>1 UCE file (based on 7 different <i>Panagrolaimus</i> sp.) </ul> 
+<ul> • 45 Illumina Short-Read (PE150) Samples (<i>Acrobeles emmatus</i>) </ul> 
+<ul> • 1 Reference Genome (<i>Acrobeloides tricornis</i>) </ul> 
+<ul> • 1 UCE file (based on 7 different <i>Panagrolaimus</i> sp.) </ul> 
 
 <h1>Tools</h1> 
 • 
