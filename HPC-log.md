@@ -6,9 +6,9 @@
 Note: The probes were designed by Laura Villegas based on 7 different <i>Panagrolaimus</i> sp.
 
 <h1>Tools</h1> 
-<ul> • <tt>bcftools (V1.18)</tt></ul> 
-<ul> • <tt>blastn (V2.14.1)</tt></ul> 
-<ul> • <tt>blobtoolkit (V4.3.5)</tt></ul> 
+<ul> • <tt>bcftools (V1.18)</tt></ul>
+<ul> • <tt>blastn (V2.14.1)</tt></ul>     
+<ul> • <tt>blobtoolkit (V4.3.5)</tt></ul>     
 <ul> • <tt>BUSCO (V5.7.1)</tt></ul> 
 <ul> • <tt>bwa-mem2 (V2.2.1)</tt></ul> 
 <ul> • <tt>Conda (V23.3.1/V4.9.2)</tt></ul> 
