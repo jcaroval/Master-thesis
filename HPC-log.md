@@ -682,6 +682,7 @@ pixy --stats pi --vcf EPT_all_filtered_modified.vcf.gz --populations ../populati
 ```
 
 <h2>6.8 Calculate between population nucleotide divergence (dxy)</h2>
+
 ```
 pixy --stats dxy --vcf EPT_all_filtered_modified.vcf.gz --populations ../populations_file.txt --window_size 10000 --n_cores 64 --output_prefix windowsize10000
 ```
