@@ -5,6 +5,7 @@
 The commands were run on the R version 4.3.2.
 
 <h1>Packages</h1>
+<ul>• <tt>ade4</tt> | Dray and Dufour, 2007</ul>
 <ul>• <tt>dplyr (V1.1.4)</tt> | Wickham et al., 2023</ul>
 <ul>• <tt>ggplot2</tt> | Wickham, 2016</ul>
 <ul>• <tt>ggpubr (V0.6.0)</tt> | Kassambara, 2023</ul>
