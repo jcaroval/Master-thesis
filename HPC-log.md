@@ -6,7 +6,29 @@
 Note: The probes were designed by Laura Villegas based on 7 different <i>Panagrolaimus</i> sp.
 
 <h1>Tools</h1> 
-• 
+<ul> • <tt>bcftools (V1.18)</tt></ul> 
+<ul> • <tt>blastn (V2.14.1)</tt></ul> 
+<ul> • <tt>blobtoolkit (V4.3.5)</tt></ul> 
+<ul> • <tt>BUSCO (V5.7.1)</tt></ul> 
+<ul> • <tt>bwa-mem2 (V2.2.1)</tt></ul> 
+<ul> • <tt>Conda (V23.3.1/V4.9.2)</tt></ul> 
+<ul> • <tt>fastp (V0.23.2)</tt></ul> 
+<ul> • <tt>IGV (V2.16.2)</tt></ul> 
+<ul> • <tt>minimap2 (V2.26-r1175)</tt></ul> 
+<ul> • <tt>MultiQC (V1.0.dev0)</tt></ul> 
+<ul> • <tt>nextgenmap (V0.5.5)</tt></ul> 
+<ul> • <tt>Phyluce (V1.7.3)</tt></ul> 
+<ul> • <tt>Picard (V2.27.5)</tt></ul> 
+<ul> • <tt>Pixy (V1.2.10.beta2)</tt></ul> 
+<ul> • <tt>Platanus-allee (V2.2.2)</tt></ul> 
+<ul> • <tt>QualiMap (V2.2.2-dev)</tt></ul> 
+<ul> • <tt>samtools (V1.18)</tt></ul> 
+<ul> • <tt>seqkit (V2.5.1)</tt></ul> 
+<ul> • <tt>seqtk (V1.2-r94)</tt></ul> 
+<ul> • <tt>SPAdes (V3.13.0)</tt></ul> 
+<ul> • <tt>Tablet (V1.21.02.08)</tt></ul> 
+
+
 <h1>1. Data Curation and Quality</h1> 
 
 <h2>1.1 Download and unzip the provided files</h2> 
