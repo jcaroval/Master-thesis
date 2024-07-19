@@ -1,31 +1,36 @@
-####Content:
+<h1> Aim </h1>  
+<h1>Content</h1> 
 • 45 Illumina Short-Read (PE150) Samples (Acrobeles emmatus)
 • 1 Reference Genome (Acrobeloides tricornis)
 • 1 UCE file (based on 7 different Panagrolaimus sp.)
 
-####Tools used:
+<h1>Tools</h1> 
 • 
+<h1>1. Data Curation and Quality</h1> 
 
-**1. Data Curation and Quality**
+<h2>1.1 Download and unzip the provided files</h2> 
 
-1.1 Download and unzip the provided files
 ```
 wget URL
 tar -xvf filename.tar
 ```
 
-1.2 Calculate and compare MD5sums. They should resemble the MD5sums that were provided by Novogene.
+<h2>1.2 Calculate and compare MD5sums. They should resemble the MD5sums that were provided by Novogene.</h2> 
+
 ```
 find . -type f -name '*.fq.gz' | while read -r file; do
 echo "current file: $file"
 md5sum "$file" >> md5sums.txt;
 done
 ```
-1.3 Create MultiQC files to investigate the quality of the raw files.
+<h2> 1.3 Create MultiQC files to investigate the quality of the raw files.</h2> 
+
 ```
 multiqc *.fq.gz
 ```
-1.4 Trim the sequences. In this case, 1 is always the forward, 2 the reverse file.
+<h2> 1.4 Trim the sequences. </h2> 
+
+In this case, 1 is always the forward, 2 the reverse file.
 ```
 fastp -i ID_1.fq.gz -I ID_2.fq.gz -o ID_trimmed_1.fq.gz -O ID_trimmed_2.fq.gz
 ```
@@ -36,38 +41,48 @@ for dir in EPT_*; do
     fastp -i $entry"_1.fq.gz" -I $entry"_2.fq.gz" -o ./$entry"_trimmed_1.fq.gz" -O ./$entry"_trimmed_2.fq.gz"; done < list_files);
 done
 ```
-1.5 Repeat step 1.3 (MultiQC) on the trimmed files.
+<h2> 1.5 Repeat step 1.3 (MultiQC) on the trimmed files.</h2> 
 
-**2. Reference-based Genome Alignments (cross-species mapping against of Acrobeles emmatus against Acrobeloides tricornis)**
+```
+multiqc *.fq.gz
+```
 
-2.1 Mapping with bwa-mem2
+<h1> 2. Reference-based Genome Alignments (cross-species mapping against of Acrobeles emmatus against Acrobeloides tricornis)</h1> 
 
-2.1.1 Create an index folder of the reference genome
+<h2> 2.1 Mapping with bwa-mem2</h2> 
+
+<h3> 2.1.1 Create an index folder of the reference genome</h3> 
+
 ```
 bwa-mem2 index PAP2217_hifi_ont_default.asm.bp.p_ctg.decont.fa
 ```
-2.1.2 Map the sequences against the reference genome
+<h3>2.1.2 Map the sequences against the reference genome</h3>
+
 ```
 bwa-mem2 mem -t 32 PAP2217_hifi_ont_default.asm.bp.p_ctg.decont.fa ID_trimmed_1.fq.gz ID_trimmed_2.fq.gz -o ID_out.sam
 ```
-2.1.3 Convert sam files to sorted bam files
+<h3>2.1.3 Convert sam files to sorted bam files</h3>
+
 ```
 samtools view -S -b ID_out.sam > ID_out.bam
 samtools sort ID_out.bam > ID_sorted.bam
 ```
-2.1.4 Check the mapping accuracy with samtools
+<h3>2.1.4 Check the mapping accuracy with samtools</h3>
+
 ```
 samtools flagstat ID_sorted.bam
 ```
-2.1.5 Check the mapping accuracy with Qualimap
+<h3>2.1.5 Check the mapping accuracy with Qualimap</h3>
+
 ```
 qualimap bamqc \
 -bam ID_sorted.bam \
 -gff busco_nematodes_all.gff
 ````
-2.2 Mapping with nextgenmap
+<h2>2.2 Mapping with nextgenmap</h2>
 
-2.2.1 Map the sequences against the reference genome
+<h3>2.2.1 Map the sequences against the reference genome</h3>
+
 ```
 ngm \
 -r PAP2217_hifi_ont_default.asm.bp.p_ctg.decont.fa \
@@ -76,23 +91,26 @@ ngm \
 -o ID_out.sam \
 -t 64
 ```
-2.2.2 Check the mapping accuracy with samtools and Qualimap similar to steps 2.1.4 and 2.1.5
+<h3>2.2.2 Check the mapping accuracy with samtools and Qualimap similar to steps 2.1.4 and 2.1.5</h3>
 
-**3. De-novo Genome Assembly**
+<h1>3. De-novo Genome Assembly</h1>
 
-3.1 Concatenate the sequences of all 45 samples.
+<h2>3.1 Concatenate the sequences of all 45 samples.</h2>
+
 ```
 cat *_trimmed_1.fq.gz >> EPT_trimmed_1.fq.gz
 cat *_trimmed_2.fq.gz >> EPT_trimmed_2.fq.gz
 ```
-3.2 Downsample the sequences to a desired fraction. This is done to reduce the runtime of used tools.
+<h2>3.2 Downsample the sequences to a desired fraction. This is done to reduce the runtime of used tools.</h2>
+
 ```
 seqtk EPT_trimmed_1.fq.gz 0.2 > sub20_1.fq.gz
 seqtk EPT_trimmed_2.fq.gz 0.2 > sub20_2.fq.gz
 ```
-3.3 SPAdes 
+</h2>3.3 SPAdes</h2> 
 
-3.3.1 Assemble the concatenated sequences with SPAdes
+<h3>3.3.1 Assemble the concatenated sequences with SPAdes</h3>
+
 ```
 spades.py \
 -meta \
@@ -103,12 +121,14 @@ spades.py \
 -2 sub20_2.fq.gz \
 -o assembly_20_percent
 ```
-3.3.2 Check the assembly accuracy with seqkit. The contigs.fa file can be found within the output folder of the assembly.
+<h3>3.3.2 Check the assembly accuracy with seqkit. The contigs.fa file can be found within the output folder of the assembly.</h3>
+
 ```
 seqkit stats contigs.fa
 ```
 
-3.3.3 Check BUSCO completeness. The lineage nematoda_odb10 is downloaded by the program automatically and does not need to be installed locally.
+<h3>3.3.3 Check BUSCO completeness. The lineage nematoda_odb10 is downloaded by the program automatically and does not need to be installed locally.</h3>
+
 ```
 busco \
 -i contigs.fa \
@@ -118,9 +138,10 @@ busco \
 -c 32
 ```
 
-3.4 Platanus_allee
+<h2>3.4 Platanus_allee</h2>
 
-3.4.1 Assemble the concatenated sequences with Platanus_allee
+<h3>3.4.1 Assemble the concatenated sequences with Platanus_allee</h3>
+
 ```
 ./platanus_allee assemble \
 -o Platanus_all.out \
@@ -128,12 +149,13 @@ busco \
 -m 800 \
 -t 64
 ```
-3.4.2 Check the assembly accurary with seqkit similar to step 3.3.2
+<h3>3.4.2 Check the assembly accurary with seqkit similar to step 3.3.2</h3>
 
 
-**4. Blobtools**
+<h1>4. Blobtools</h1>
 
-4.1 Blast the contig file from the De-novo Genome Assembly against the nucleotide database
+<h2>4.1 Blast the contig file from the De-novo Genome Assembly against the nucleotide database</h2>
+
 ```
 blastn \
 -task megablast \
@@ -145,11 +167,13 @@ blastn \
 -evalue 1e-25 \
 -out /home/jcaroval/02.TrimmedData/blastn/megablast.out
 ```
-4.2 Run minimap to receive a coverage file
+<h2>4.2 Run minimap to receive a coverage file</h2>
+
 ```
 minimap2 -ax sr -t 16 ./assembly_20_percent/contigs.fa sub20_1.fq.gz sub20_2.fq.gz | samtools sort -@16 -O BAM -o contigs.fasta.bam
 ```
-4.3 Run Blobtools
+<h2>4.3 Run Blobtools</h2>
+
 ```
 blobtools create \
 --fasta ./assembly_20_percent/contigs.fa \
@@ -158,18 +182,20 @@ blobtools create \
 --taxid 55786 \
 --taxdump ./taxdump blob_EPT
 ```
-4.4 Visualize Blobplot
+<h2>4.4 Visualize Blobplot</h2>
+
 ```
 blobtools view \
 --remote \
 --view blob blob_EPT
 ```
 
-**5. Mapping against UCEs**
+<h1>5. Mapping against UCEs</h1>
 
 This pipeline follows this protocol: https://phyluce.readthedocs.io/en/latest/tutorials/tutorial-1.html#aligning-uce-loci
 
-5.1 Assemble the data. Here, only a subset of 6 samples was assembled.
+<h2>5.1 Assemble the data. Here, only a subset of 6 samples was assembled.</h2>
+
 ```
 phyluce_assembly_assemblo_spades \
 --conf assembly.conf \
@@ -177,14 +203,16 @@ phyluce_assembly_assemblo_spades \
 --core 64 \
 --mem 800
 ```
-5.2 Match contigs to probes
+<h2>5.2 Match contigs to probes</h2>
+
 ```
 phyluce_assembly_match_contigs_to_probes \
 --contigs spades-assemblies/contigs \
 --probes Panagrolaimus1-v1-master-probe-list-DUPE-SCREENED.fasta \
 --output UCEs --min-coverage 30
 ```
-5.3 Get match counts
+<h2>5.3 Get match counts</h2>
+
 ```
 phyluce_assembly_get_match_counts \
 --locus-db UCEs/probe.matches.sqlite \
@@ -193,7 +221,8 @@ phyluce_assembly_get_match_counts \
 --incomplete-matrix \
 --output taxon-sets/all-taxa-incomplete.conf
 ```
-5.4 Get fastas from match counts
+<h2>5.4 Get fastas from match counts</h2>
+
 ```
 phyluce_assembly_get_fastas_from_match_counts \
 --contigs ../../spades-assemblies/contigs \
@@ -203,42 +232,49 @@ phyluce_assembly_get_fastas_from_match_counts \
 --incomplete-matrix all-taxa-incomplete.incomplete \
 --log-path log
 ```
-5.5 Get individual fasta files from all-taxa-incomplete.fasta
+<h2>5.5 Get individual fasta files from all-taxa-incomplete.fasta</h2>
+
 ```
 phyluce_assembly_explode_get_fastas_file \
 --input all-taxa-incomplete.fasta \
 --output exploded-fastas \
 --by-taxon
 ```
-5.6 Get summary stats on the individual fasta files
+<h2>5.6 Get summary stats on the individual fasta files</h2>
+
 ```
 for i in exploded-fastas/*.fasta;
 do
   phyluce_assembly_get_fasta_lengths --input $i --csv;
 done
 ```
-5.7 Investigate the amount of contigs
+<h2>5.7 Investigate the amount of contigs</h2>
+
 ```
 seqkit stats all-taxa-incomplete.fasta
 ```
 
-5.8 Remove duplicates from all-taxa-incomplete.fasta
+<h2>5.8 Remove duplicates from all-taxa-incomplete.fasta</h2>
+
 ```
 seqkit sort –n all-taxa-incomplete-length.fasta > all-taxa-incomplete-sorted.fasta
 cut -d ‘_’ -f 1 all-taxa-incomplete-sorted.fasta > all-taxa-incomplete-sorted-shortened.fasta
 seqkit rmdup -n < all-taxa-incomplete-sortened-shortened.fasta > all-taxa-incomplete-no-dups.fasta
 ```
-5.9 Check the amount of contigs again
+<h2>5.9 Check the amount of contigs again</h2>
+
 ```
 seqkit stats all-taxa-incomplete-no-dups.fasta
 ```
-5.10 Map individual sequences against the reference set with bwa-mem2
+<h2>5.10 Map individual sequences against the reference set with bwa-mem2</h2>
 
-5.10.1 Create index for reference set
+<h3>5.10.1 Create index for reference set</h3>
+
 ```
 bwa-mem2 index all-taxa-incomplete-no-dups.fasta
 ```
-5.10.2 Map against reference set
+<h3>5.10.2 Map against reference set</h3>
+
 ```
 bwa-mem2 mem \
 -t 32 \
@@ -268,7 +304,8 @@ for INDIVIDUAL_DIR in ./02.TrimmedData/EPT_*; do
 done
 ```
 
-5.10.3 Set a flag-tag for each individual
+<h3>5.10.3 Set a flag-tag for each individual</h3>
+
 ```
 SAM_DIR="/home/jcaroval/09.UCE/bwa-mem2-UCE"
 OUTPUT_DIR="/home/jcaroval/09.UCE/bwa-mem2-UCE"
@@ -291,7 +328,8 @@ for input_sam in ${SAM_DIR}/*.sam; do
 ```
 
 
-5.10.4 Convert SAM to BAM
+<h3>5.10.4 Convert SAM to BAM</h3>
+
 ```
 ls *_RG.sam | sed 's/_RG.sam//g' > list-XX 
 while read f; do 
@@ -299,7 +337,8 @@ samtools view -b $f"_RG.sam" > $f"_RG.bam" ;
 done < list-XX
 ```
 
-5.10.5 Quality check of the mappings using samtools flagstat
+<h3>5.10.5 Quality check of the mappings using samtools flagstat</h3>
+
 ```
 for bam_file in *.bam
 do
@@ -320,7 +359,8 @@ do
 done
 ```
 
-5.11 Sort the BAM file
+<h2>5.11 Sort the BAM file</h2>
+
 ```
 for file in *_RG.bam; do
     sample_id=$(basename "$file" .bam)
@@ -328,7 +368,8 @@ for file in *_RG.bam; do
     samtools sort "$file" -o "$sorted_file"
 ```
 
-5.12 Extract only the mapped reads from the BAM files
+<h2>5.12 Extract only the mapped reads from the BAM files</h2>
+
 ```
 for sorted_file in *_sorted.bam; do
     sample_id=$(basename "$sorted_file" .bam)
@@ -337,7 +378,8 @@ for sorted_file in *_sorted.bam; do
 done
 ```
 
-5.13 Repeat QC with flagstat to make sure that only mapped reads are included (100 % mapped reads)
+<h2>5.13 Repeat QC with flagstat to make sure that only mapped reads are included (100 % mapped reads)</h2>
+
 ```
 for bam_file in *_RG_sorted_mapped.bam
 do
@@ -348,28 +390,33 @@ do
 done
 ```
 
-5.14 Merge all BAM files into one
+<h2>5.14 Merge all BAM files into one</h2>
+
 ```
 samtools merge -@ 64 -r merged.bam *_sorted_mapped.bam
 ```
 
-5.15 Index the merged BAM file
+<h2>5.15 Index the merged BAM file</h2>
+
 ```
 samtools index merged.bam
 ```
 
-5.14 Visualize the mapping in Tablet
+<h2>5.14 Visualize the mapping in Tablet</h2>
+
 ```
 ./tablet /home/jcaroval/09.UCE/bwa-mem2-UCE/merged.bam /home/jcaroval/10.UCE_index/all-taxa-incomplete-no-dups.fasta
 ```
 or on IVG.
 
-5.15 Calculate the coverage
+<h2>5.15 Calculate the coverage</h2>
+
 ```
 samtools depth -a merged.bam > coverage.txt
 ```
 
-5.16 Split the coverage.txt file for each UCE and plot the coverage
+<h2>5.16 Split the coverage.txt file for each UCE and plot the coverage</h2>
+
 ```
 coverage_file="coverage.txt"
 output_dir="./coverage_no_slidingwindow"
@@ -387,7 +434,8 @@ done
 ```
 then, investigate the plots
 
-5.17 (optional) Apply a sliding window approach to smoothen the data
+<h2>5.17 (optional) Apply a sliding window approach to smoothen the data</h2>
+
 ```
 coverage_file="coverage.txt"
 
@@ -430,12 +478,13 @@ EOF
 EOF
 ```
 
-5.18 Retrieve coverage and abundance
+<h2>5.18 Retrieve coverage and abundance</h2>
 ```
 ls *merged.bam | parallel -j 5 'samtools depth {} > {}.depth'
 ```
 
-5.19 Sort the UCEs by their average coverage
+<h2>5.19 Sort the UCEs by their average coverage</h2>
+
 ```
 input_file="merged.bam.depth"
 output_file="merged_average_coverages.txt"
@@ -447,7 +496,7 @@ sort -n -k2 "merged_average_coverages.txt" > "merged_sorted_average_coverages.tx
 ```
 Here, a threshold was set to an average coverage of 360. This threshold was chosen because a minimum threshold of 8X per individual was desired. With 45 individuals, it can be assumed that UCEs with a coverage below 360 do not lead to sufficient results.
 
-5.20 Remove the low-coverage UCEs from the files.
+<h2>5.20 Remove the low-coverage UCEs from the files.</h2>
 
 ```
 awk '$2 < 360 {print $1}' "merged_average_coverages.txt" > "uce_list_below_360.txt"
@@ -475,7 +524,7 @@ for bam_file in "$bam_dir"/*_RG_sorted_mapped.bam; do
 done
 ```
 
-5.21 Count the UCEs to verify that the correct number of UCEs had been removed
+<h2>5.21 Count the UCEs to verify that the correct number of UCEs had been removed</h2>
 
 … for the merged file
 ```
@@ -499,24 +548,28 @@ for bam_file in "$bam_dir"/*_RG_sorted_mapped.bam; do
 done
 ```
 
-7. Different Approach (starting at 5.13)
+<h1>6. pixy (starting at 5.13)</h1>
 
-7.1 Create bam-lists per sampling-spot (do this for all sampling spots)
+<h2>7.1 Create bam-lists per sampling-spot (do this for all sampling spots)</h2>
+
 ```
 ls *_RG_sorted_mapped.bam > EPT_all_bam_list.txt
 ```
 
-7.2 Create pileup files per sampling spot
+<h2>7.2 Create pileup files per sampling spot</h2>
+
 ```
 bcftools mpileup -f ../../../10.UCE_index/all-taxa-incomplete-no-dups.fasta -b EPT_all_bam_list.txt --threads 64 | bcftools call -m -Oz -f GQ -o EPT_all_mpileup_bcftools.vcf --threads 64
 ```
 
-7.3 Filter coverage range
+<h2>7.3 Filter coverage range</h2>
+
 ```
 bcftools filter -i 'INFO/DP>=8 && INFO/DP<=50' -Oz -o EPT_all_filtered.vcf EPT_all_mpileup_bcftools.vcf --threads 64
 ```
 
-7.4 Relocate the DP content (as the default position within the dataset could not be found by pixy)
+<h2>7.4 Relocate the DP content (as the default position within the dataset could not be found by pixy)</h2>
+
 ```
 input_vcf="EPT_all_filtered.vcf.gz"
 output_vcf="EPT_all_filtered_modified.vcf.gz"
@@ -572,7 +625,7 @@ echo "Modified VCF file saved to $output_vcf"
 ```
 
 
-7.5 Zip and index the vcf
+<h2>7.5 Zip and index the vcf</h2>
 
 ```
 bgzip EPT_all_filtered_modified.vcf #optional, as this was already done in the relocation-script 
@@ -583,14 +636,16 @@ bgzip EPT_all_filtered_modified.vcf #optional, as this was already done in the r
 tabix EPT_all_filtered_modified.vcf.gz
 ```
 
-7.6 Create populations file (containing all sample IDs in column 1 and their regarding sampling spots in column 2)
+<h2>7.6 Create populations file (containing all sample IDs in column 1 and their regarding sampling spots in column 2)</h2>
 
-7.7 Calculate within population nucleotide diversity (pi). The window_size is set to 10000 so that it always calculates for the whole UCE.
+<h2>7.7 Calculate within population nucleotide diversity (pi). The window_size is set to 10000 so that it always calculates for the whole UCE.</h2>
+
 ```
 pixy --stats pi --vcf EPT_all_filtered_modified.vcf.gz --populations ../populations_file.txt --window_size 10000 --n_cores 64 --output_prefix windowsize10000
 ```
 
-7.8 Calculate between population nucleotide divergence (dxy)
+<h2>7.8 Calculate between population nucleotide divergence (dxy)</h2>
+
 ```
 pixy --stats dxy --vcf EPT_all_filtered_modified.vcf.gz --populations ../populations_file.txt --window_size 10000 --n_cores 64 --output_prefix windowsize10000
 ```
