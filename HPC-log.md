@@ -507,6 +507,7 @@ EOF
 ```
 
 <h2>5.18 Retrieve coverage and abundance</h2>
+
 ```
 ls *merged.bam | parallel -j 5 'samtools depth {} > {}.depth'
 ```
