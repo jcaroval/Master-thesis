@@ -578,7 +578,7 @@ done
 
 <h1>6. pixy</h1>
 
-This pipeline continues from section 5.13 with the sorted and mapped BAM files.
+This pipeline continues from step 5.13 with the sorted and mapped BAM files.
 
 <h2>6.1 Create bam-list for the EPT</h2>
 
