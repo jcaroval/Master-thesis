@@ -576,7 +576,7 @@ for bam_file in "$bam_dir"/*_RG_sorted_mapped.bam; do
 done
 ```
 
-<h1>6. pixy</h1>
+<h1>6. Calculation of nucleotide diversity</h1>
 
 This pipeline continues from step 5.13 with the sorted and mapped BAM files.
 
