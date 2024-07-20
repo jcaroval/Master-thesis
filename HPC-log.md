@@ -11,7 +11,7 @@ Note: The probes were designed by Laura Villegas based on 7 different <i>Panagro
 <ul> • <tt>blobtoolkit (V4.3.5)</tt> | Challis et al, 2019</ul>     
 <ul> • <tt>BUSCO (V5.7.1)</tt> | Manni et al., 2021</ul> 
 <ul> • <tt>bwa-mem2 (V2.2.1)</tt> | Vasimuddin et al., 2019</ul> 
-<ul> • <tt>Conda (V23.3.1/V4.9.2)</tt></ul> 
+<ul> • <tt>Conda (V23.3.1/V4.9.2)</tt> | Anaconda, Inc., 2023</ul>
 <ul> • <tt>fastp (V0.23.2)</tt> | Chen et al., 2018</ul> 
 <ul> • <tt>IGV (V2.16.2)</tt> | Robinson et al., 2011</ul> 
 <ul> • <tt>minimap2 (V2.26-r1175)</tt> | Li, 2018</ul> 
