@@ -361,7 +361,7 @@ for input_sam in ${SAM_DIR}/*.sam; do
 ```
 ls *_RG.sam | sed 's/_RG.sam//g' > list-XX 
 while read f; do 
-samtools view -b $f"_RG.sam" > $f"_RG.bam" ;
+samtools view -@ 64 -b $f"_RG.sam" > $f"_RG.bam" ;
 done < list-XX
 ```
 
