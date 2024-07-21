@@ -372,7 +372,7 @@ for bam_file in *.bam
 do
     sample_id=$(basename "$bam_file" .bam)
     echo "Sample ID: $sample_id" >> flagstat.out
-    samtools flagstat "$bam_file" >> flagstat.out
+    samtools flagstat -@ 64 "$bam_file" >> flagstat.out
     echo "" >> flagstat.out
 done
 ```
