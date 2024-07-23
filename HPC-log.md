@@ -220,7 +220,7 @@ blobtools view \
 
 <h1>5. Mapping against UCEs</h1>
 
-This pipeline follows this protocol: https://phyluce.readthedocs.io/en/latest/tutorials/tutorial-1.html#aligning-uce-loci
+This pipeline is a modified version of this protocol: https://phyluce.readthedocs.io/en/latest/tutorials/tutorial-1.html#aligning-uce-loci
 
 <h2>5.1 Assemble the data. Here, only a subset of 6 samples was assembled.</h2>
 
@@ -260,7 +260,42 @@ phyluce_assembly_get_fastas_from_match_counts \
 --incomplete-matrix all-taxa-incomplete.incomplete \
 --log-path log
 ```
-<h2>5.5 Get individual fasta files from all-taxa-incomplete.fasta</h2>
+<h2>5.5 Align sequences</h2>
+
+```
+phyluce_align_seqcap_align \
+    --input all-taxa-incomplete.fasta \
+    --output mafft-nexus-internal-trimmed \
+    --taxa 6 \
+    --aligner mafft \
+    --cores 64 \
+    --incomplete-matrix \
+    --output-format fasta \
+    --no-trim \
+    --log-path log
+```
+
+<h2>5.6 Investigate the amount of contigs</h2>
+
+```
+seqkit stats all-taxa-incomplete_internal_trimmed.fasta
+```
+
+<h2>5.7 Remove duplicates from all-taxa-incomplete.fasta</h2>
+
+```
+seqkit sort –n all-taxa-incomplete-length.fasta > all-taxa-incomplete-sorted.fasta
+sed -e 's/^>.*\(uce-[^_ |]*\).*/>\1/' all-taxa-incomplete-sorted.fasta > all-taxa-incomplete-sorted-shortened.fasta
+```
+The duplicates were then removed manually. Where ≥2 sequences were available for the same UCE, only the file with least amount of gaps was kept. The remaining sequences were discarded. The file was then saved as "all-taxa-incomplete-internal-trimmed-no-dups.fasta"
+
+<h2>5.8 Check the amount of contigs again</h2>
+
+```
+seqkit stats all-taxa-incomplete-internal-trimmed-no-dups.fasta
+```
+
+<h2>5.9 (optional) Get individual fasta files from all-taxa-incomplete.fasta</h2>
 
 ```
 phyluce_assembly_explode_get_fastas_file \
@@ -268,7 +303,7 @@ phyluce_assembly_explode_get_fastas_file \
 --output exploded-fastas \
 --by-taxon
 ```
-<h2>5.6 Get summary stats on the individual fasta files</h2>
+<h2>5.10 (optional) Get summary stats on the individual fasta files</h2>
 
 ```
 for i in exploded-fastas/*.fasta;
@@ -276,37 +311,20 @@ do
   phyluce_assembly_get_fasta_lengths --input $i --csv;
 done
 ```
-<h2>5.7 Investigate the amount of contigs</h2>
+
+<h2>6 Map individual sequences against the reference set with bwa-mem2</h2>
+
+<h3>6.1 Create index for reference set</h3>
 
 ```
-seqkit stats all-taxa-incomplete.fasta
+bwa-mem2 index all-taxa-incomplete-internal-trimmed-no-dups.fasta
 ```
-
-<h2>5.8 Remove duplicates from all-taxa-incomplete.fasta</h2>
-
-```
-seqkit sort –n all-taxa-incomplete-length.fasta > all-taxa-incomplete-sorted.fasta
-cut -d ‘_’ -f 1 all-taxa-incomplete-sorted.fasta > all-taxa-incomplete-sorted-shortened.fasta
-seqkit rmdup -n < all-taxa-incomplete-sortened-shortened.fasta > all-taxa-incomplete-no-dups.fasta
-```
-<h2>5.9 Check the amount of contigs again</h2>
-
-```
-seqkit stats all-taxa-incomplete-no-dups.fasta
-```
-<h2>5.10 Map individual sequences against the reference set with bwa-mem2</h2>
-
-<h3>5.10.1 Create index for reference set</h3>
-
-```
-bwa-mem2 index all-taxa-incomplete-no-dups.fasta
-```
-<h3>5.10.2 Map against reference set</h3>
+<h3>6.2 Map against reference set</h3>
 
 ```
 bwa-mem2 mem \
 -t 32 \
-./10.UCE_index/all-taxa-incomplete-no-dups.fasta \
+./10.UCE_index/all-taxa-incomplete-internal-trimmed-no-dups.fasta \
 ./02.TrimmedData/ID/ID_trimmed_1.fq.gz \
 ./02.TrimmedData/ID/ID_trimmed_2.fq.gz \
 -o 09.UCE/ID_UCEs_out.sam
@@ -323,7 +341,7 @@ for INDIVIDUAL_DIR in ./02.TrimmedData/EPT_*; do
       if ls $READ1 1> /dev/null 2>&1 && ls $READ2 1> /dev/null 2>&1; then
         OUTPUT_FILE="./09.UCE/bwa-mem2-UCE/${INDIVIDUAL}_UCEs_out.sam"
 
-          bwa-mem2 mem -t 32 ./10.UCE_index/all-taxa-incomplete-no-dups.fasta $READ1 $READ2 -o $OUTPUT_FILE
+          bwa-mem2 mem -t 32 ./10.UCE_index/all-taxa-incomplete-internal-trimmed-no-dups.fasta $READ1 $READ2 -o $OUTPUT_FILE
           echo "Finished bwa-mem2 for $INDIVIDUAL."
       else
         echo "Skipped $INDIVIDUAL due to missing read files."
@@ -332,15 +350,15 @@ for INDIVIDUAL_DIR in ./02.TrimmedData/EPT_*; do
 done
 ```
 
-<h3>5.10.3 Set a flag-tag for each individual</h3>
+<h3>6.3 Set a flag-tag for each individual</h3>
 
 ```
 SAM_DIR="/home/jcaroval/09.UCE/bwa-mem2-UCE"
 OUTPUT_DIR="/home/jcaroval/09.UCE/bwa-mem2-UCE"
-for input_sam in ${SAM_DIR}/*.sam; do
+for input_sam in ${SAM_DIR}/*internal_trimmed.sam; do
   filename=$(basename -- "$input_sam")
   sample=$(echo $filename | cut -d'_' -f1,2)
-  output_sam="${OUTPUT_DIR}/${sample}_RG.sam"
+  output_sam="${OUTPUT_DIR}/${sample}_internal_trimmed_RG.sam"
 
   picard AddOrReplaceReadGroups \
        I=$input_sam \
@@ -356,7 +374,7 @@ for input_sam in ${SAM_DIR}/*.sam; do
 ```
 
 
-<h3>5.10.4 Convert SAM to BAM</h3>
+<h3>6.4 Convert SAM to BAM</h3>
 
 ```
 ls *_RG.sam | sed 's/_RG.sam//g' > list-XX 
@@ -365,7 +383,7 @@ samtools view -@ 64 -b $f"_RG.sam" > $f"_RG.bam" ;
 done < list-XX
 ```
 
-<h3>5.10.5 Quality check of the mappings using samtools flagstat</h3>
+<h3>6.5 Quality check of the mappings using samtools flagstat</h3>
 
 ```
 for bam_file in *.bam
@@ -387,7 +405,7 @@ do
 done
 ```
 
-<h2>5.11 Sort the BAM file</h2>
+<h2>6.6 Sort the BAM file</h2>
 
 ```
 for file in *_RG.bam; do
@@ -396,7 +414,7 @@ for file in *_RG.bam; do
     samtools sort "$file" -o "$sorted_file"
 ```
 
-<h2>5.12 Extract only the mapped reads from the BAM files</h2>
+<h2>6.7 Extract only the mapped reads from the BAM files</h2>
 
 ```
 for sorted_file in *_sorted.bam; do
@@ -406,7 +424,7 @@ for sorted_file in *_sorted.bam; do
 done
 ```
 
-<h2>5.13 Repeat QC with flagstat to make sure that only mapped reads are included (100 % mapped reads)</h2>
+<h2>6.8 Repeat QC with flagstat to make sure that only mapped reads are included (100 % mapped reads)</h2>
 
 ```
 for bam_file in *_RG_sorted_mapped.bam
@@ -418,32 +436,32 @@ do
 done
 ```
 
-<h2>5.14 Merge all BAM files into one</h2>
+<h2>6.9 (Optional) Merge all BAM files into one</h2>
 
 ```
 samtools merge -@ 64 -r merged.bam *_sorted_mapped.bam
 ```
 
-<h2>5.15 Index the merged BAM file</h2>
+<h2>6.10 Index the merged BAM file</h2>
 
 ```
 samtools index merged.bam
 ```
 
-<h2>5.14 Visualize the mapping in Tablet</h2>
+<h2>6.11 (Optional) Visualize the mapping in Tablet</h2>
 
 ```
 ./tablet /home/jcaroval/09.UCE/bwa-mem2-UCE/merged.bam /home/jcaroval/10.UCE_index/all-taxa-incomplete-no-dups.fasta
 ```
 or on IVG.
 
-<h2>5.15 Calculate the coverage</h2>
+<h2>6.12 (Optional) Calculate the coverage</h2>
 
 ```
 samtools depth -a merged.bam > coverage.txt
 ```
 
-<h2>5.16 Split the coverage.txt file for each UCE and plot the coverage</h2>
+<h2>6.13 (Optional) Split the coverage.txt file for each UCE and plot the coverage</h2>
 
 ```
 coverage_file="coverage.txt"
@@ -462,7 +480,7 @@ done
 ```
 then, investigate the plots
 
-<h2>5.17 (optional) Apply a sliding window approach to smoothen the data</h2>
+<h2>6.14 (Optional) Apply a sliding window approach to smoothen the data</h2>
 
 ```
 coverage_file="coverage.txt"
@@ -506,13 +524,13 @@ EOF
 EOF
 ```
 
-<h2>5.18 Retrieve coverage and abundance</h2>
+<h2>6.15 (Optional) Retrieve coverage and abundance</h2>
 
 ```
 ls *merged.bam | parallel -j 5 'samtools depth {} > {}.depth'
 ```
 
-<h2>5.19 Sort the UCEs by their average coverage</h2>
+<h2>6.16 (Optional) Sort the UCEs by their average coverage</h2>
 
 ```
 input_file="merged.bam.depth"
@@ -524,7 +542,7 @@ and sort them by value
 sort -n -k2 "merged_average_coverages.txt" > "merged_sorted_average_coverages.txt"
 ```
 
-<h2>5.20 Remove the low-coverage UCEs from the files.</h2>
+<h2>6.17 (Optional) Remove the low-coverage UCEs from the files.</h2>
 
 ```
 awk '$2 < 360 {print $1}' "merged_average_coverages.txt" > "uce_list_below_360.txt"
@@ -552,7 +570,7 @@ for bam_file in "$bam_dir"/*_RG_sorted_mapped.bam; do
 done
 ```
 
-<h2>5.21 Count the UCEs to verify that the correct number of UCEs had been removed</h2>
+<h2>6.18 (Optional) Count the UCEs to verify that the correct number of UCEs had been removed</h2>
 
 … for the merged file
 ```
@@ -576,29 +594,30 @@ for bam_file in "$bam_dir"/*_RG_sorted_mapped.bam; do
 done
 ```
 
-<h1>6. Calculation of nucleotide diversity</h1>
+<h1>7. Calculation of nucleotide diversity</h1>
 
 This pipeline continues from step 5.13 with the sorted and mapped BAM files.
 
-<h2>6.1 Create bam-list for the EPT</h2>
+<h2>7.1 Create bam-list for the EPT</h2>
 
 ```
 ls *_RG_sorted_mapped.bam > EPT_all_bam_list.txt
 ```
 
-<h2>6.2 Create pileup files per sampling spot</h2>
+<h2>7.2 Create pileup files per sampling spot</h2>
 
 ```
 bcftools mpileup -f ../../../10.UCE_index/all-taxa-incomplete-no-dups.fasta -b EPT_all_bam_list.txt --threads 64 | bcftools call -m -Oz -f GQ -o EPT_all_mpileup_bcftools.vcf --threads 64
 ```
 
-<h2>6.3 Filter coverage range</h2>
+<h2>7.3 Filter coverage range</h2>
 
+We aimed for a coverage of 8X to 50X per individual to extract the flanking regions. Therefore, in the pileup file, those values were multiplied by the 45 individuals.
 ```
-bcftools filter -i 'INFO/DP>=8 && INFO/DP<=50' -Oz -o EPT_all_filtered.vcf EPT_all_mpileup_bcftools.vcf --threads 64
+bcftools filter -i 'INFO/DP>=360 && INFO/DP<=2250' -Oz -o EPT_all_filtered.vcf EPT_all_mpileup_bcftools.vcf --threads 64
 ```
 
-<h2>6.4 Relocate the DP content</h2>
+<h2>7.4 Relocate the DP content</h2>
 
 This had to be done as the default position of DP within the dataset could not be found by pixy.
 
@@ -657,22 +676,18 @@ echo "Modified VCF file saved to $output_vcf"
 ```
 
 
-<h2>6.5 Zip and index the vcf</h2>
+<h2>7.5 Zip and index the vcf</h2>
 
-```
-bgzip EPT_all_filtered_modified.vcf #optional, as this was already done in the relocation-script 
-```
-
-… and run tabix
+Note: Zipping was already included in the prior step.
 ```
 tabix EPT_all_filtered_modified.vcf.gz
 ```
 
-<h2>6.6 Create populations file</h2>
+<h2>7.6 Create populations file</h2>
 
 This file needs to contain all sample IDs in column 1 and their regarding sampling spots in column 2
 
-<h2>6.7 Calculate within population nucleotide diversity (pi).</h2>
+<h2>7.7 Calculate within population nucleotide diversity (pi).</h2>
 
 The window_size is set to 10000 so that it always calculates for the whole UCE.
 
@@ -680,7 +695,7 @@ The window_size is set to 10000 so that it always calculates for the whole UCE.
 pixy --stats pi --vcf EPT_all_filtered_modified.vcf.gz --populations ../populations_file.txt --window_size 10000 --n_cores 64 --output_prefix windowsize10000
 ```
 
-<h2>6.8 Calculate between population nucleotide divergence (dxy)</h2>
+<h2>7.8 Calculate between population nucleotide divergence (dxy)</h2>
 
 ```
 pixy --stats dxy --vcf EPT_all_filtered_modified.vcf.gz --populations ../populations_file.txt --window_size 10000 --n_cores 64 --output_prefix windowsize10000
