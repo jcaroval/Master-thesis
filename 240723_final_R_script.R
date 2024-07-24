@@ -29,7 +29,6 @@ diversity_data <- diversity_data %>%
   mutate(Sampling.site = factor(Sampling.site))
 str(diversity_data)
 
-
 ######Distance Matrix and Grid Estimation######
 #Define coordinates of the sampling spots (done with a 100x100 raster in Powerpoint based on the scheme that was provided from the sampling site)
 coord <- data.frame(
