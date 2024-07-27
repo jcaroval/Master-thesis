@@ -1,9 +1,10 @@
-<h1> Aim </h1>  
+<h1> Goal </h1>
+The goal of this pipeline was finding a way to make population genomic analysis appliccable to challenging short-read genomic data sets.
+
 <h1>Data</h1> 
 <ul> • 45 Illumina short-read (PE150) samples (<i>Acrobeles emmatus</i>) </ul> 
 <ul> • 1 Reference genome (<i>Acrobeloides tricornis</i>) </ul> 
-<ul> • 1 UCE probe list (containing probes for 1606 different uces) </ul> 
-Note: The probes were designed by Laura Villegas based on 7 different <i>Panagrolaimus</i> sp.
+<ul> • 1 UCE probe list (containing probes for 1606 different uces, designed for Panagrolaimidae) </ul> 
 
 <h1>Tools</h1> 
 <ul> • <tt>bcftools (V1.18)</tt> | Danecek et al., 2021</ul>
