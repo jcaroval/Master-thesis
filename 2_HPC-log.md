@@ -68,7 +68,7 @@ for dir in EPT_*; do
     fastp -i $entry"_1.fq.gz" -I $entry"_2.fq.gz" -o ./$entry"_trimmed_1.fq.gz" -O ./$entry"_trimmed_2.fq.gz"; done < list_files);
 done
 ```
-<h2> 1.5 Repeat step 1.3 (MultiQC) on the trimmed files.</h2> 
+<h2> 1.5 Repeat MultiQC on the trimmed files.</h2> 
 
 ```
 multiqc *_trimmed_*.fq.gz
@@ -449,18 +449,19 @@ samtools merge -@ 64 -r merged.bam *_sorted_mapped.bam
 samtools index merged.bam
 ```
 
-<h2>6.11 (Optional) Visualize the mapping in Tablet</h2>
+<h2>6.11 Visualize the mapping in Tablet</h2>
 
 ```
 ./tablet /home/jcaroval/09.UCE/bwa-mem2-UCE/merged.bam /home/jcaroval/10.UCE_index/all-taxa-incomplete-no-dups.fasta
 ```
 or on IVG.
 
-<h2>6.12 (Optional) Calculate the coverage</h2>
+<h2>6.12 Calculate the coverage</h2>
 
 ```
 samtools depth -a merged.bam > coverage.txt
 ```
+
 
 <h2>6.13 (Optional) Split the coverage.txt file for each UCE and plot the coverage</h2>
 
@@ -525,75 +526,12 @@ EOF
 EOF
 ```
 
-<h2>6.15 (Optional) Retrieve coverage and abundance</h2>
+<h2>6.15 Retrieve coverage and abundance</h2>
 
 ```
 ls *merged.bam | parallel -j 5 'samtools depth {} > {}.depth'
 ```
 
-<h2>6.16 (Optional) Sort the UCEs by their average coverage</h2>
-
-```
-input_file="merged.bam.depth"
-output_file="merged_average_coverages.txt"
-awk '{ sum[$1] += $3; count[$1]++ } END { for (uce in sum) print uce, sum[uce] / count[uce] }' "${input_file}" > "${output_file}"
-```
-and sort them by value
-```
-sort -n -k2 "merged_average_coverages.txt" > "merged_sorted_average_coverages.txt"
-```
-
-<h2>6.17 (Optional) Remove the low-coverage UCEs from the files.</h2>
-
-```
-awk '$2 < 360 {print $1}' "merged_average_coverages.txt" > "uce_list_below_360.txt"
-```
-… for the merged file
-```
-samtools view -H merged.bam > header.sam
-samtools view -@ 64 merged.bam | grep -v -F -f uce_list_below_360.txt | cat header.sam - | samtools view -b -@ 64 > merged_filtered.bam
-
-rm header.sam
-```
-… and for all individual files
-```
-uce_list="uce_list_below_360.txt"
-bam_dir="."
-num_threads=64
-for bam_file in "$bam_dir"/*_RG_sorted_mapped.bam; do
-    sample_id=$(basename "$bam_file" .bam)
-    output="${bam_dir}/${sample_id}_filtered.bam"
-
-    samtools view -H "$bam_file" > header.sam
-    samtools view -@ "$num_threads" "$bam_file" | grep -v -F -f "$uce_list" | cat header.sam - | samtools view -b -@ "$num_threads" > "$output"
-
-    rm header.sam
-done
-```
-
-<h2>6.18 (Optional) Count the UCEs to verify that the correct number of UCEs had been removed</h2>
-
-… for the merged file
-```
-samtools view -@ 64 "merged_filtered.bam" | awk '{print $3}' | sort | uniq | wc -l
-```
-… and for all individual files
-```
-uce_list="uce_list_below_360.txt"
-bam_dir="."
-num_threads=64
-result_file="uce_counts.txt"
-
-echo -e "Sample_ID\tBefore_Filtering\tAfter_Filtering" > "$result_file"
-
-for bam_file in "$bam_dir"/*_RG_sorted_mapped.bam; do
-    sample_id=$(basename "$bam_file" .bam)
-    output="${bam_dir}/${sample_id}_filtered.bam"
-    uce_count_before=$(samtools view -@ "$num_threads" "$bam_file" | awk '{print $3}' | sort | uniq | wc -l)
-    uce_count_after=$(samtools view -@ "$num_threads" "$output" | awk '{print $3}' | sort | uniq | wc -l)
-    echo -e "${sample_id}\t${uce_count_before}\t${uce_count_after}" >> "$result_file"
-done
-```
 
 <h1>7. Calculation of nucleotide diversity</h1>
 
