@@ -1,0 +1,17 @@
+﻿Sampling.site;Habitat;Cactus;Bush;Rock;total.extract;lost;pooled_total;Cephalobidae_pool;Qudsianematidae_pool;Alaimidae_pool;Aphelenchoididae_pool;single_total;Acrobeles_single;Acrobeloides_single;Aphelenchoides_single;Stegelletina_single;Ditylenchus_single;Panagrolaimus_single;no.PCR.product;NA;Qudsianematidae_single;Cephalobidae.count;Panagrolaimidae.count;Alaimidae.count;Aphelenchoididae.count;Qudsianematidae.count;Anguinidae.count;undefined.count;total.count;Cephalobidae.rel;Panagrolaimidae.rel;Alaimidae.rel;Aphelenchoididae.rel;Qudsianematidae.rel;Anguinidae.rel;undefined.rel;total.rel;A.emmatus;A.mariannae;complex;hap_A;hap_B;hap_C
+EPT0A;Cactus;present;absent;absent;19;1;7;7;0;0;0;11;9;0;0;0;0;0;1;1;0;16;0;0;0;0;0;3;19;0.842105263;0;0;0;0;0;0.157894737;1;6;2;0;2;1;1
+EPT0B;Bush;absent;present;absent;18;4;2;0;2;0;0;12;5;1;0;0;1;0;3;1;1;6;0;0;0;3;1;8;18;0.333333333;0;0;0;0.166666667;0.055555556;0.444444444;1;5;0;0;0;3;1
+EPT0C;Cactus;present;absent;absent;23;1;9;9;0;0;0;13;8;0;0;0;0;0;1;4;0;17;0;0;0;0;0;6;23;0.739130435;0;0;0;0;0;0.260869565;1;7;0;0;3;1;2
+EPT0D;Bush&Rock;absent;present;present;59;1;48;37;11;0;0;10;4;5;0;0;0;0;1;0;0;46;0;0;0;11;0;2;59;0.779661017;0;0;0;0.186440678;0;0.033898305;1;4;0;0;0;4;0
+EPT0E;Bush;absent;present;absent;50;7;24;24;0;0;0;19;11;0;4;0;0;0;3;1;0;35;0;0;4;0;0;11;50;0.7;0;0;0.08;0;0;0.22;1;9;2;0;3;2;1
+EPT0F;Cactus&Bush;present;present;absent;223;2;209;201;2;3;3;12;10;0;1;0;1;0;0;0;0;211;0;3;4;2;1;2;223;0.946188341;0;0.013452915;0.01793722;0.00896861;0.004484305;0.00896861;1;5;4;0;2;1;2
+EPT0G;Cactus;present;absent;absent;54;3;44;32;12;0;0;7;6;0;0;0;0;1;0;0;0;38;1;0;0;12;0;3;54;0.703703704;0.018518519;0;0;0.222222222;0;0.055555556;1;0;5;1;0;0;0
+EPT0H;Rock;absent;absent;present;13;0;7;0;7;0;0;6;4;0;0;0;0;0;1;1;0;4;0;0;0;7;0;2;13;0.307692308;0;0;0;0.538461538;0;0.153846154;1;4;0;0;1;1;1
+EPT0I;Bush;absent;present;absent;291;1;279;275;4;0;0;11;10;0;0;0;0;1;0;0;0;285;1;0;0;4;0;1;291;0.979381443;0.003436426;0;0;0.013745704;0;0.003436426;1;9;0;0;0;3;3
+EPT0J;All.habitats;present;present;present;287;0;277;245;32;0;0;10;8;0;0;0;0;0;2;0;0;253;0;0;0;32;0;2;287;0.881533101;0;0;0;0.111498258;0;0.006968641;1;4;4;0;1;0;2
+EPT0K;Cactus;present;absent;absent;10;0;5;0;5;0;0;5;4;0;0;0;0;0;1;0;0;4;0;0;0;5;0;1;10;0.4;0;0;0;0.5;0;0.1;1;0;4;0;0;0;0
+EPT0L;none;absent;absent;absent;4;0;0;0;0;0;0;4;2;0;0;0;0;0;1;0;1;2;0;0;0;1;0;1;4;0.5;0;0;0;0.25;0;0.25;1;2;0;0;1;0;0
+EPT0M;Cactus;present;absent;absent;12;0;3;0;3;0;0;9;5;0;0;1;0;0;1;1;1;6;0;0;0;4;0;2;12;0.5;0;0;0;0.333333333;0;0.166666667;1;0;4;1;0;0;0
+EPT0N;Rock;absent;absent;present;10;0;3;0;3;0;0;7;3;1;0;0;0;0;1;2;0;4;0;0;0;3;0;3;10;0.4;0;0;0;0.3;0;0.3;1;2;0;1;0;2;0
+EPT0O;Bush&Rock;absent;present;present;83;1;72;62;10;0;0;10;10;0;0;0;0;0;0;0;0;72;0;0;0;10;0;1;83;0.86746988;0;0;0;0.120481928;0;0.012048193;1;8;0;0;4;1;2
+EPT0P;Bush;absent;present;absent;11;2;2;0;2;0;0;7;5;0;0;0;0;0;0;1;1;5;0;0;0;3;0;3;11;0.454545455;0;0;0;0.272727273;0;0.272727273;1;4;0;0;0;1;1
